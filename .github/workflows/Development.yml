@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    env:
+      PROJECT_PATH: Snake
 
     runs-on: ubuntu-latest
 
@@ -18,14 +20,8 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore $project_path
-      env:
-        project_path: Snake
+      run: dotnet restore $PROJECT_PATH
     - name: Build
-      run: dotnet build $project_path --configuration Release --no-restore
-      env:
-        project_path: Snake
+      run: dotnet build $PROJECT_PATH --configuration Release --no-restore
     - name: Test
-      run: dotnet test $project_path --no-restore --verbosity normal
-      env:
-        project_path: Snake
+      run: dotnet test $PROJECT_PATH --no-restore --verbosity normal      
