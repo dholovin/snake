@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Snake.Common
 {
     public abstract class BaseView
@@ -21,12 +24,14 @@ namespace Snake.Common
             Height = height;
         }
 
-        public void SetDimensions(int startX, int startY, int width, int height)
+        public async Task SetDimensions(int startX, int startY, int width, int height, CancellationToken cancellationToken)
         {
             StartX = startX;
             StartY = startY;
             Width = width;
             Height = height;
+
+            await Task.CompletedTask;
         }
     } 
 }

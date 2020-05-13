@@ -29,9 +29,10 @@ namespace Snake
         public async Task Initialize(CancellationToken cancellationToken)
         {
             // TODO: prompt for screen size -> adjust scale
+            var scale = Constants.MAIN_SCREEN_SCALE;
 
-            var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE + Constants.PADDING * 2;
-            var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
+            var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH * scale + Constants.PADDING * 2;
+            var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * scale + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
 
             var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
             if (width < minWidth || height < minHeight) 
@@ -39,27 +40,32 @@ namespace Snake
                 throw new ArgumentException(String.Format(Constants.SCREEN_RESOLUTION_ERROR, minWidth, minHeight));
             }
 
-            // Top Left
-            _helpView.SetDimensions(
-                Constants.PADDING, 
-                Constants.PADDING,
-                Constants.HELP_PANE_WIDTH,
-                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE);
+            Task.WaitAll(new Task[3] {
+                // Top Left
+                _helpView.SetDimensions(
+                    Constants.PADDING, 
+                    Constants.PADDING,
+                    Constants.HELP_PANE_WIDTH,
+                    Constants.MAIN_SCREEN_MIN_HEIGHT * scale, cancellationToken),
+                // Top Right
+                _mainView.SetDimensions(
+                    Constants.PADDING + Constants.HELP_PANE_WIDTH + Constants.PADDING, 
+                    Constants.PADDING,
+                    Constants.MAIN_SCREEN_MIN_WIDTH * scale,
+                    Constants.MAIN_SCREEN_MIN_HEIGHT * scale, cancellationToken),
+                // Bottom
+                _summaryView.SetDimensions(
+                    Constants.PADDING,
+                    Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * scale + Constants.PADDING,
+                    Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH * scale,
+                    Constants.SUMMARY_PANE_HEIGHT, cancellationToken)
+            });
 
-            // Top Right
-            _mainView.SetDimensions(
-                Constants.PADDING + Constants.HELP_PANE_WIDTH + Constants.PADDING, 
-                Constants.PADDING,
-                Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
-                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE);
-
-            // Bottom
-            _summaryView.SetDimensions(
-                Constants.PADDING,
-                Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE + Constants.PADDING,
-                Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
-                Constants.SUMMARY_PANE_HEIGHT);
-
+            Task.WaitAll(new Task[3] {
+                _helpView.DrawBorder(cancellationToken),
+                _mainView.DrawBorder(cancellationToken),
+                _summaryView.DrawBorder(cancellationToken)
+            });
 
             _initialized = true;
         }
@@ -73,10 +79,7 @@ namespace Snake
             // initBoardPanel()
             // initStatusPanel()
             // await boardPanel.DrawBoarder(cancellationToken);
-            await _mainView.DrawBorder(cancellationToken);
-            await _summaryView.DrawBorder(cancellationToken);
-            await _helpView.DrawBorder(cancellationToken);
-
+            
             // await UpdateScoresAsync(scoresItem, cancellationToken);
             // bool? playAgain = null;
             // while (playAgain == null)
