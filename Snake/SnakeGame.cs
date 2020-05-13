@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Snake.Common;
-using Snake.Panels;
+using Snake.Views;
 using Snake.ServiceContracts.Interfaces;
 
 namespace Snake
@@ -10,9 +10,9 @@ namespace Snake
     internal class SnakeGame : BaseComponent, IGame
     {
         private IInputOutputService _inputOutputService;
-        private MainPanel _mainPanel;
-        private HelpPanel _helpPane;
-        private SummaryPanel _summaryPane;
+        private MainView _mainView;
+        private HelpView _helpView;
+        private SummaryView _summaryView;
         // private (int startX, int startY, int width, int height) _helpPane;
         private bool _initialized;
 
@@ -37,7 +37,7 @@ namespace Snake
             }
 
             // Top Left
-            _helpPane = new HelpPanel(
+            _helpView = new HelpView(
                 Constants.PADDING, 
                 Constants.PADDING,
                 Constants.HELP_PANE_WIDTH,
@@ -45,7 +45,7 @@ namespace Snake
                 _inputOutputService);
 
             // Top Right
-            _mainPanel = new MainPanel(
+            _mainView = new MainView(
                 Constants.PADDING + Constants.HELP_PANE_WIDTH + Constants.PADDING, 
                 Constants.PADDING,
                 Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
@@ -53,7 +53,7 @@ namespace Snake
                 _inputOutputService);
 
             // Bottom
-            _summaryPane = new SummaryPanel(
+            _summaryView = new SummaryView(
                 0,
                 Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE + Constants.PADDING,
                 Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
@@ -73,7 +73,7 @@ namespace Snake
             // initBoardPanel()
             // initStatusPanel()
             // await boardPanel.DrawBoarder(cancellationToken);
-            await _mainPanel.DrawBorder(cancellationToken);
+            await _mainView.DrawBorder(cancellationToken);
 
             // await UpdateScoresAsync(scoresItem, cancellationToken);
             // bool? playAgain = null;
@@ -88,7 +88,7 @@ namespace Snake
 
         public async Task<bool> ShouldPlayAgain(CancellationToken cancellationToken) 
         {
-            return await _summaryPane.ShouldPlayAgain(cancellationToken);
+            return await _summaryView.ShouldPlayAgain(cancellationToken);
         }
 
         public async Task Terminate(CancellationToken cancellationToken)

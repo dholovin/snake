@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Snake.Common;
 using Snake.ServiceContracts.Interfaces;
 
-namespace Snake.Panels
+namespace Snake.Views
 {
-    public class SummaryPanel : BasePanel
+    public class SummaryView : BasePanel
     {
         private IInputOutputService _inputOutputService;
 
-        public SummaryPanel(int startX, int startY, int width, int height, IInputOutputService io) 
+        public SummaryView(int startX, int startY, int width, int height, IInputOutputService io) 
             : base(startX, startY, width, height)
         {
             _inputOutputService = io;

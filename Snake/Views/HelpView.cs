@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using Snake.Common;
 using Snake.ServiceContracts.Interfaces;
 
-namespace Snake.Panels
+namespace Snake.Views
 {
-    public class HelpPanel : BasePanel
+    public class HelpView : BasePanel
     {
         private IInputOutputService _inputOutputService;
 
-        public HelpPanel(int startX, int startY, int width, int height, IInputOutputService io) 
+        public HelpView(int startX, int startY, int width, int height, IInputOutputService io) 
             : base(startX, startY, width, height)
         {
             _inputOutputService = io;
