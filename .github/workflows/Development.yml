@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      env:
-        project_path: Snake
-
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -22,6 +19,8 @@ jobs:
         dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet restore $project_path
+      env:
+        project_path: Snake
     - name: Build
       run: dotnet build $project_path --configuration Release --no-restore
     - name: Test
