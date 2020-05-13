@@ -23,7 +23,9 @@ namespace Snake.ServiceContracts
             await _game.Initialize(cancellationToken);
 
             // ThreadPool.QueueUserWorkItem(async state => {
-            await Task.Run(async () => {
+            // await Task.Run(async () => {
+            try
+            {
                 var gameOver = false;
                 
                 while (!gameOver && !cancellationToken.IsCancellationRequested)
@@ -32,11 +34,19 @@ namespace Snake.ServiceContracts
 
                     gameOver = !(await _game.ShouldPlayAgain(cancellationToken));
                 }
-
                 
                 await _game.Terminate(cancellationToken);
-
-            }, cancellationToken);
+            }
+            catch (OperationCanceledException ex)
+            {
+                 // Expected after the worker performs:
+                // StopAsync(cancellationToken);
+                // cancellationToken.ThrowIfCancellationRequested();
+                // TODO: how to handle in non-terminal scenarios?
+                System.Terminal.OutLine(ex.Message);
+                System.Terminal.ReadLine();
+            }
+            // }, cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -44,7 +54,6 @@ namespace Snake.ServiceContracts
             var msg  = "Thank you for playing. Good bye.";
             await _inputOutputService.Clear(cancellationToken);
             await _inputOutputService.Print(0, 0, msg, cancellationToken);
-            
             // await Task.Delay(2000); // would throw exception to host.RunTerminalAsync()
             Thread.Sleep(2000);
         }

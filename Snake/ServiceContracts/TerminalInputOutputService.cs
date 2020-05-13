@@ -1,20 +1,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Snake.Common;
 using Snake.ServiceContracts.Interfaces;
 using static System.Terminal;
 
 namespace Snake.ServiceContracts
 {
-    public class TerminalInputOutputService : IInputOutputService
+    public class TerminalInputOutputService : BaseComponent, IInputOutputService
     {
-        // private IFigureService _figureService;
-
-        // public TerminalInputOutputService(IFigureService figureService)
-        // {
-        //     _figureService = figureService;
-        // }
-
         public async Task Clear(CancellationToken cancellationToken = default)
         {
             ClearScreen();

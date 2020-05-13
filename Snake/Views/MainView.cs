@@ -5,23 +5,24 @@ using Snake.ServiceContracts.Interfaces;
 
 namespace Snake.Views
 {
-    public class MainView : BasePanel
+    public class MainView : BaseView
     {
-        private IInputOutputService _inputOutputService;
+       private readonly IInputOutputService _inputOutputService;
+        private readonly IFigureService _figureService;
 
-        public MainView(int startX, int startY, int width, int height, IInputOutputService io) 
-            : base(startX, startY, width, height)
+        public MainView(IInputOutputService inputOutputService, IFigureService figureService)
         {
-            _inputOutputService = io;
+            _inputOutputService = inputOutputService;
+            _figureService = figureService;
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken) {
             // ֍ ۞ † ☼ □
             // string dashBlock = "▬";
-            const string topHorizontBlock = "▄";
-            const string bottomHorizontBlock = "▀";
-            const string leftVertBlock = "▌";
-            const string rightVertBlock = "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontBlock(cancellationToken);          // "▄";
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontBlock(cancellationToken);    // "▀";
+            string leftVertBlock = await _figureService.GetLeftVertBlock(cancellationToken);                // "▌";
+            string rightVertBlock = await _figureService.GetRightVertBlock(cancellationToken);              // "▐";
 
             for (int y = StartY; y < StartY + Height; y++)
             {

@@ -9,18 +9,21 @@ namespace Snake
 {
     internal class SnakeGame : BaseComponent, IGame
     {
-        private IInputOutputService _inputOutputService;
-        private MainView _mainView;
-        private HelpView _helpView;
-        private SummaryView _summaryView;
+        private readonly IInputOutputService _inputOutputService;
+        private readonly MainView _mainView;
+        private readonly HelpView _helpView;
+        private readonly SummaryView _summaryView;
         // private (int startX, int startY, int width, int height) _helpPane;
         private bool _initialized;
 
         // private int _screenHeight;
 
-        public SnakeGame(IInputOutputService io) 
+        public SnakeGame(IInputOutputService io, MainView mainView, HelpView helpView, SummaryView summaryView) 
         {
             _inputOutputService = io;
+            _mainView = mainView;
+            _helpView = helpView;
+            _summaryView = summaryView;
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
@@ -37,28 +40,25 @@ namespace Snake
             }
 
             // Top Left
-            _helpView = new HelpView(
+            _helpView.SetDimensions(
                 Constants.PADDING, 
                 Constants.PADDING,
                 Constants.HELP_PANE_WIDTH,
-                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE,
-                _inputOutputService);
+                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE);
 
             // Top Right
-            _mainView = new MainView(
+            _mainView.SetDimensions(
                 Constants.PADDING + Constants.HELP_PANE_WIDTH + Constants.PADDING, 
                 Constants.PADDING,
                 Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
-                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE,
-                _inputOutputService);
+                Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE);
 
             // Bottom
-            _summaryView = new SummaryView(
-                0,
+            _summaryView.SetDimensions(
+                Constants.PADDING,
                 Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * Constants.MAIN_SCREEN_SCALE + Constants.PADDING,
-                Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
-                Constants.SUMMARY_PANE_HEIGHT,
-                _inputOutputService);
+                Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH * Constants.MAIN_SCREEN_SCALE,
+                Constants.SUMMARY_PANE_HEIGHT);
 
 
             _initialized = true;
@@ -74,6 +74,8 @@ namespace Snake
             // initStatusPanel()
             // await boardPanel.DrawBoarder(cancellationToken);
             await _mainView.DrawBorder(cancellationToken);
+            await _summaryView.DrawBorder(cancellationToken);
+            await _helpView.DrawBorder(cancellationToken);
 
             // await UpdateScoresAsync(scoresItem, cancellationToken);
             // bool? playAgain = null;

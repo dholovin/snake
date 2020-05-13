@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Snake.ServiceContracts;
 using Snake.ServiceContracts.Interfaces;
+using Snake.Views;
 
 namespace Snake
 {
@@ -21,8 +22,11 @@ namespace Snake
                         services.AddSingleton<IHostedService, SnakeHostedService>();
                         services.AddSingleton<IGame, SnakeGame>();
                         services.AddTransient<IInputOutputService, TerminalInputOutputService>();
+                        services.AddTransient<IFigureService, FigureService>();
+                        services.AddTransient<MainView>();
+                        services.AddTransient<HelpView>();
+                        services.AddTransient<SummaryView>();
                         // services.AddSingleton<TerminalIO>();
-                        // services.AddTransient<SplashScreen>();
                         // services.AddTransient<LeaderBoardScreen>();
                         // services.AddTransient<GameScreen>();
                         // services.AddTransient<HelpBoard>();
