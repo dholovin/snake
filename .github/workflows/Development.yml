@@ -23,5 +23,9 @@ jobs:
         project_path: Snake
     - name: Build
       run: dotnet build $project_path --configuration Release --no-restore
+      env:
+        project_path: Snake
     - name: Test
       run: dotnet test $project_path --no-restore --verbosity normal
+      env:
+        project_path: Snake

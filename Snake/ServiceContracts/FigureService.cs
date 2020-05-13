@@ -5,7 +5,7 @@ using Snake.ServiceContracts.Interfaces;
 
 namespace Snake.ServiceContracts
 {
-    public class FigureService : BaseComponent, IFigureService
+    public class FigureService : BaseService, IFigureService
     {
         public async Task<string> GetTopHorizontBlock(CancellationToken cancellationToken = default)
         {

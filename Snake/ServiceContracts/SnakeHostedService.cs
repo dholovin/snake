@@ -7,7 +7,7 @@ using Snake.ServiceContracts.Interfaces;
 
 namespace Snake.ServiceContracts
 {
-    public class SnakeHostedService : BaseComponent, IHostedService
+    public class SnakeHostedService : BaseService, IHostedService
     {
         private IInputOutputService _inputOutputService;
         private IGame _game;
@@ -20,19 +20,20 @@ namespace Snake.ServiceContracts
 
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
-            await _game.Initialize(cancellationToken);
-
-            // ThreadPool.QueueUserWorkItem(async state => {
-            // await Task.Run(async () => {
+            // TODO: check difference between Exception Handling
+            // Task.Run(async () =>                        // .NET 4.5
+            // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
             try
             {
-                var gameOver = false;
+                var exitGame = false;
                 
-                while (!gameOver && !cancellationToken.IsCancellationRequested)
+                while (!exitGame && !cancellationToken.IsCancellationRequested)
                 {
-                    await _game.Play(cancellationToken);
+                    var (initialLevel, screenSizeMultiplier) = await _game.AskForInitialSetup(cancellationToken);
+                    // await _game.Initialize(initialLevel, screenSizeMultiplier, cancellationToken);
+                    var gameStatus = await _game.Play(initialLevel, screenSizeMultiplier, cancellationToken);
 
-                    gameOver = !(await _game.ShouldPlayAgain(cancellationToken));
+                    exitGame = !(await _game.ShouldPlayAgain(cancellationToken));
                 }
                 
                 await _game.Terminate(cancellationToken);

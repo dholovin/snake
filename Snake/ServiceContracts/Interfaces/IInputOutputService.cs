@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Snake.Common.Enums;
 
 namespace Snake.ServiceContracts.Interfaces
 {
@@ -15,6 +16,9 @@ namespace Snake.ServiceContracts.Interfaces
         
         public Task<byte?> GetKey(CancellationToken cancellationToken);
         public Task<string> GetString(CancellationToken cancellationToken);
-        public Task Terminate(CancellationToken cancellationToken);       
+        public Task Terminate(CancellationToken cancellationToken);    
+
+
+        public Task<PlayerActionEnum> GetPlayerAction(CancellationToken cancellationToken); // Lives here, can it be different for different devices?
     } 
 }

@@ -1,22 +1,26 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Snake.Common;
+using Snake.Common.Enums;
 using Snake.ServiceContracts.Interfaces;
 
 namespace Snake.Views
 {
     public class MainView : BaseView
     {
-       private readonly IInputOutputService _inputOutputService;
+        private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
+        public event EventHandler OnGameFinished;
+        
         public MainView(IInputOutputService inputOutputService, IFigureService figureService)
         {
             _inputOutputService = inputOutputService;
             _figureService = figureService;
         }
 
-        public async Task DrawBorder(CancellationToken cancellationToken) {
+        public async Task DrawBorder(CancellationToken cancellationToken = default) {
             // ֍ ۞ † ☼ □
             // string dashBlock = "▬";
             string topHorizontBlock = await _figureService.GetTopHorizontBlock(cancellationToken);          // "▄";
@@ -61,6 +65,15 @@ namespace Snake.Views
             //         await IO.OutAsync(DeltaX, y + DeltaY, line, cancellationToken);
             //     }
             // }
+        }
+
+        public async Task Tick(PlayerActionEnum action, CancellationToken cancellationToken = default) {
+            if (true) 
+            {
+                OnGameFinished?.Invoke(this, new EventArgs());
+            }
+
+            await Task.CompletedTask;
         }
     } 
 }
