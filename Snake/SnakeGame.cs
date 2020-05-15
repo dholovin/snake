@@ -81,6 +81,7 @@ namespace Snake
 
             // Subscribe to Events
             _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
+            _mainView.OnFoodHit += (sender, args) => { _summaryView.Score += Constants.SCORE_INCREMENT; };
             //  _glass.OnFullLine += async (sender, args) =>
             // {
             //     _scoreBoard.Lines++;

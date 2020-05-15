@@ -29,6 +29,7 @@ namespace Snake.Views
         
 
         public event EventHandler OnGameOver;
+        public event EventHandler OnFoodHit;
 
         public PlayerActionEnum CurrentAction { get; set; }
 
@@ -71,7 +72,7 @@ namespace Snake.Views
             CancellationToken cancellationToken = default)
         {
             await base.SetDimensions(startX, startY, width, height, cancellationToken);
-            await _inputOutputService.Print(0, 0, new Random().Next(100), cancellationToken); // DEBUG
+            //await _inputOutputService.Print(0, 0, new Random().Next(100), cancellationToken); // as
 
             // Init Snake position
             var sn_x = startX + width/2;
@@ -95,7 +96,7 @@ namespace Snake.Views
 
             // TODO: do we need this check?
             if(!cancellationToken.IsCancellationRequested) {
-                await _inputOutputService.Print(3, 3,  randomizer.Next(100), cancellationToken); // DEBUG
+                //await _inputOutputService.Print(3, 3,  randomizer.Next(100), cancellationToken); // DEBUG
                 
                 var borderWidth = 1;
                 var head = _snake.Last();
@@ -142,7 +143,7 @@ namespace Snake.Views
                 _snake.Add(newHead);
                 
                 if (_food.Contains(newHead)) {
-                    // TODO: Hit Food - increase the score
+                    OnFoodHit?.Invoke(this, new EventArgs());
                     _food.Remove(newHead);
                 } else {
                     await _inputOutputService.Print(tail.X, tail.Y, " ", cancellationToken);

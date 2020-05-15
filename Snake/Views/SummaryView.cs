@@ -10,7 +10,14 @@ namespace Snake.Views
         private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
-        public int Score { get; set; }
+        private int _score;
+        public int Score { 
+            get { return _score; }
+            set {
+                _score = value;
+                _inputOutputService.Print(StartX + 1, StartY + Height - 2, "SCORE: " + value, CancellationToken.None);
+            }
+        }
         public short Level { get; set; }
 
         public SummaryView(IInputOutputService inputOutputService, IFigureService figureService)
