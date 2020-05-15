@@ -10,11 +10,13 @@ namespace Snake.ServiceContracts
         public async Task<string> GetTopHorizontFigure(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult("▄");
+            // return await Task.FromResult("▀");
         }
 
         public async Task<string> GetBottomHorizontFigure(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult("▀");
+            //return await Task.FromResult("▄");
         }
 
         public async Task<string> GetLeftVertFigure(CancellationToken cancellationToken = default)
