@@ -8,11 +8,11 @@ namespace Snake.ServiceContracts.Interfaces
     {
         public Task<(int Width, int Height)> GetViewportDimensions(CancellationToken cancellationToken);
         public Task Clear(CancellationToken cancellationToken);
-        public Task Print(string message, CancellationToken cancellationToken);   
-        public Task Print(int x, int y, string message, CancellationToken cancellationToken);
+        public Task Print(object message, CancellationToken cancellationToken);   
+        public Task Print(int x, int y, object message, CancellationToken cancellationToken);
         //public Task Print(int x, int y, int width, string message, CancellationToken cancellationToken);
-        public Task PrintAtNextLine(string message, CancellationToken cancellationToken);
-        public Task PrintAtNextLine(int x, int y, string message, CancellationToken cancellationToken);
+        public Task PrintAtNextLine(object message, CancellationToken cancellationToken);
+        public Task PrintAtNextLine(int x, int y, object message, CancellationToken cancellationToken);
         
         public Task<byte?> GetKey(CancellationToken cancellationToken);
         public Task<string> GetString(CancellationToken cancellationToken);

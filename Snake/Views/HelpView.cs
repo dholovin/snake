@@ -17,10 +17,10 @@ namespace Snake.Views
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken) {
-            string topHorizontBlock = await _figureService.GetTopHorizontBlock(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontBlock(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertBlock(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertBlock(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
 
             for (int y = StartY; y < StartY + Height; y++)
             {

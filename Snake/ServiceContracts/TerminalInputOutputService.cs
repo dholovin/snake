@@ -23,8 +23,8 @@ namespace Snake.ServiceContracts
             {
                 SetRawMode(true, true);
 
-                // IsCursorVisible = false;
-                IsCursorVisible = true;
+                IsCursorVisible = false;
+                // IsCursorVisible = true;
                 IsCursorBlinking = false;
             }
 
@@ -56,32 +56,32 @@ namespace Snake.ServiceContracts
             return await Task.FromResult(output);
         }
 
-        public async Task Print(string message, CancellationToken cancellationToken = default)
+        public async Task Print(object message, CancellationToken cancellationToken = default)
         {
-            Out(message);
+            Out(message.ToString());
 
             await Task.CompletedTask;
         }
 
-        public async Task PrintAtNextLine(string message, CancellationToken cancellationToken = default)
+        public async Task PrintAtNextLine(object message, CancellationToken cancellationToken = default)
         {
-            OutLine(message);
+            OutLine(message.ToString());
 
             await Task.CompletedTask;
         }
 
-        public async Task PrintAtNextLine(int x, int y, string message, CancellationToken cancellationToken = default)
+        public async Task PrintAtNextLine(int x, int y, object message, CancellationToken cancellationToken = default)
         {
             MoveCursorTo(x, y);
-            OutLine(message);
+            OutLine(message.ToString());
 
             await Task.CompletedTask;
         }
 
-        public async Task Print(int x, int y, string message, CancellationToken cancellationToken = default)
+        public async Task Print(int x, int y, object message, CancellationToken cancellationToken = default)
         {
             MoveCursorTo(x, y);
-            Out(message);
+            Out(message.ToString());
 
             await Task.CompletedTask;
         }
@@ -97,8 +97,9 @@ namespace Snake.ServiceContracts
         {
             var key = await GetKey(cancellationToken);
 
-            if (key != null)
-                await Print(String.Format(" Key Pressed '{0}'", key.ToString()), cancellationToken);
+            // TODO: if ever need to log/display pressed key code
+            // if (key != null)
+            //     await Print(String.Format(" Key Pressed '{0}'", key.ToString()), cancellationToken);
 
             if (key == 3 || key == 110 || key == 78)                        // Ctrl+C, 'n', 'N' - terminate program
                 return await Task.FromResult(PlayerActionEnum.Terminate);

@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Snake.Common;
@@ -11,8 +10,8 @@ namespace Snake.Views
         private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
-        public int Score { get; private set; }
-        public short Level { get; private set; }
+        public int Score { get; set; }
+        public short Level { get; set; }
 
         public SummaryView(IInputOutputService inputOutputService, IFigureService figureService)
         {
@@ -22,30 +21,11 @@ namespace Snake.Views
             Level = 0; // default
         }
 
-        public async Task UpdateSummary(int score, short level, CancellationToken cancellationToken) 
-        {
-            Score = score;
-            Level = level;
-
-            await Task.CompletedTask;
-        }
-
-        public async Task SetScore(int score, CancellationToken cancellationToken) 
-        {
-            Score = score;
-            await Task.CompletedTask;
-        }
-        public async Task SetLevel(short level, CancellationToken cancellationToken) 
-        {
-            Level = level;
-            await Task.CompletedTask;
-        }
-
         public async Task DrawBorder(CancellationToken cancellationToken) {
-            string topHorizontBlock = await _figureService.GetTopHorizontBlock(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontBlock(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertBlock(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertBlock(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
 
             for (int y = StartY; y < StartY + Height; y++)
             {

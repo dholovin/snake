@@ -43,12 +43,14 @@ namespace Snake
             var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
 
             // Check screen size compatibility 
-            var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
+            // var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
+            var (width, height) = (120,120);
             if (width < minWidth || height < minHeight) 
                 throw new ArgumentException(String.Format(Constants.SCREEN_RESOLUTION_ERROR, minWidth, minHeight));
 
-            
-            await _summaryView.SetLevel(initialLevel, cancellationToken);
+            _summaryView.Level = initialLevel;
+            // TODO: fire some Event, maybe?
+            _mainView.CurrentAction = PlayerActionEnum.Right;
 
             // Initialize Views and set dimensions 
             Task.WaitAll(new Task[3] {
@@ -76,11 +78,9 @@ namespace Snake
                 _mainView.DrawBorder(cancellationToken),
                 _summaryView.DrawBorder(cancellationToken)
             });
-            
-            
 
             // Subscribe to Events
-            _mainView.OnGameFinished += (sender, args) => { _isGameActive = false; };
+            _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
             //  _glass.OnFullLine += async (sender, args) =>
             // {
             //     _scoreBoard.Lines++;
@@ -108,17 +108,16 @@ namespace Snake
             _isGameActive = true;
 
             
-            // TODO: check difference between Exception Handling
+            // TODO: test Exception Handling for different approaches
             Task.Run(async () =>                        // .NET 4.5
             // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
             {
                 await PlayerActionsHandler(cancellationToken);
             }, cancellationToken);
 
-            while (_isGameActive && !cancellationToken.IsCancellationRequested)
+            while (_initialized && _isGameActive && !cancellationToken.IsCancellationRequested)
             {
-                // Draw board and start moving Snake
-                await _mainView.Tick(PlayerActionEnum.None, cancellationToken);
+                await _mainView.Tick(cancellationToken);
                 await Task.Delay(_tickDelay, cancellationToken);
             }
 
@@ -133,28 +132,43 @@ namespace Snake
             // Task.Run(async () =>                        // .NET 4.5
             // // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
             // {
-                while (_isGameActive && !cancellationToken.IsCancellationRequested)
+                while (_initialized && _isGameActive && !cancellationToken.IsCancellationRequested)
                 {
                     var playerAction = await _inputOutputService.GetPlayerAction(cancellationToken);
 
-                    // if (playerAction == PlayerActionEnum.Terminate)
-                    // {
-                    //     await Terminate(cancellationToken); // Ctrl+C - terminate program, pass false
-                    //     break;
-                    // }
-                    // else if (playerAction == PlayerActionEnum.Quit)
-                    // {
-                    //     await Terminate(cancellationToken); // Ctrl+Z - quit program, pass true
-                    //     break;
-                    // }
-                    // else if (playerAction == PlayerActionEnum.ToggleHelpView) //  toggle help view
-                    // {
-                    //     // TODO: implement
-                    // }    
-                    // else if (playerAction != PlayerActionEnum.None) //  toggle help view
-                    //     await _mainView.Tick(playerAction, cancellationToken);
-                    // else 
-                    //     continue;
+                    if (playerAction == PlayerActionEnum.Terminate)
+                    {
+                        // Ctrl+C - terminate program, pass false
+                        // _isGameActive = false; // TODO: check if THIS or Terminate() exits _mainView.Tick()
+                        await Terminate(cancellationToken); 
+                        break;
+                    }
+                    else if (playerAction == PlayerActionEnum.Quit)
+                    {
+                        // Ctrl+Z - quit program, pass true
+                        // _isGameActive = false; // TODO: check if THIS or Terminate() exits _mainView.Tick()
+                        await Terminate(cancellationToken); 
+                        break;
+                    }
+                    else if (playerAction == PlayerActionEnum.ToggleHelpView)
+                    {
+                        // TODO: implement Toggle help view
+                    }
+                    else if (playerAction != PlayerActionEnum.None)
+                    {
+                        // Ignore PlayerActions geometrically opposite to current action
+                        if (!(_mainView.CurrentAction == PlayerActionEnum.Left && playerAction == PlayerActionEnum.Right)
+                            && !(_mainView.CurrentAction == PlayerActionEnum.Right && playerAction == PlayerActionEnum.Left)
+                            && !(_mainView.CurrentAction == PlayerActionEnum.Up && playerAction == PlayerActionEnum.Down)
+                            && !(_mainView.CurrentAction == PlayerActionEnum.Down && playerAction == PlayerActionEnum.Up)) {
+
+                            // Update game action
+                            _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
+                            await _mainView.Tick(cancellationToken); // This would give a god speed if player holds a key :)
+                        }
+                    }
+                    else 
+                        continue;
                 }
             // }, cancellationToken);
 

@@ -24,7 +24,8 @@ namespace Snake.Common
             Height = height;
         }
 
-        public async Task SetDimensions(int startX, int startY, int width, int height, CancellationToken cancellationToken)
+        public virtual async Task SetDimensions(int startX, int startY, int width, int height,
+            CancellationToken cancellationToken = default)
         {
             StartX = startX;
             StartY = startY;
