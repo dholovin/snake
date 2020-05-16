@@ -5,6 +5,10 @@ Developed for fun and to practice .Net Core 3.1.
 ## License
 Please see [LICENSE.md](LICENSE.md).
 
+## Known Issues
+- Lacks thread-safety (List<T> is used).
+- Terminates game when 'n' or 'y' is pressed.
+
 ## Contact
 You can reach me via my [email](mailto://denis.golovin@gmail.com).
 
