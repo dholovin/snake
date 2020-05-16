@@ -17,6 +17,7 @@ namespace Snake
         private readonly SummaryView _summaryView;
         private bool _initialized;
         private bool _isGameActive;
+        private int _DEBUG_OnFoodHits = 0;
         private int _tickDelay => Constants.LEVEL_SPEED_MULTIPLIER * (10 - _summaryView.Level);
 
         public SnakeGame(IInputOutputService io, MainView mainView, HelpView helpView, SummaryView summaryView) 
@@ -25,6 +26,14 @@ namespace Snake
             _mainView = mainView;
             _helpView = helpView;
             _summaryView = summaryView;
+
+            // TODO: Ensure we subscribe for events  only once
+            _mainView.OnFoodHit += (sender, args) => {
+                _summaryView.Score += Constants.SCORE_INCREMENT; 
+                //  _DEBUG_OnFoodHits++;
+                //  _inputOutputService.Print(0,0, _DEBUG_OnFoodHits ,CancellationToken.None);
+            };
+            _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
         }
 
         public async Task<(short, short)> AskForInitialSetup(CancellationToken cancellationToken = default)
@@ -44,7 +53,7 @@ namespace Snake
             return await Task.FromResult(((short)playerLevel, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
         }
 
-        public async Task Initialize(short initialLevel, short screenSizeMultiplier, CancellationToken cancellationToken = default)
+        public async Task Initialize(short screenSizeMultiplier, CancellationToken cancellationToken = default)
         {
             var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier + Constants.PADDING * 2;
             var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
@@ -55,10 +64,7 @@ namespace Snake
             if (width < minWidth || height < minHeight) 
                 throw new ArgumentException(String.Format(Constants.SCREEN_RESOLUTION_ERROR, minWidth, minHeight));
 
-            _summaryView.Level = initialLevel;
-            _summaryView.Score = 0;
-            _mainView.Food.Clear();
-            _mainView.CurrentAction = PlayerActionEnum.Right; // TODO: fire Event, maybe?
+            await _inputOutputService.Clear(cancellationToken);
 
             // Initialize Views and set dimensions 
             Task.WaitAll(new Task[3] {
@@ -87,26 +93,19 @@ namespace Snake
                 _summaryView.DrawBorder(cancellationToken)
             });
 
-            // Subscribe to Events
-            _mainView.OnFoodHit += (sender, args) => { _summaryView.Score += Constants.SCORE_INCREMENT; };
-            _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
-
             _initialized = true;
         }
 
-        public async Task<GameStatus> Play(CancellationToken cancellationToken = default)
+        public async Task<GameStatus> Play(short initialLevel, CancellationToken cancellationToken = default)
         {
             if (!_initialized)
                 throw new ArgumentException(Constants.NOT_INITIALIZED_ERROR);
 
-            // await IO.ClearAsync(cancellationToken);
-            // await _helpBoard.ResetAsync(cancellationToken);
-            // await _scoreBoard.ResetAsync(playerLevel, cancellationToken);
-            // await _glass.ResetAsync(cancellationToken);
+            await _summaryView.Reset(initialLevel, cancellationToken);            
+            await _mainView.Reset(cancellationToken);
 
             _isGameActive = true;
 
-            
             // TODO: test Exception Handling for different approaches
             Task.Run(async () =>                        // .NET 4.5
             // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1

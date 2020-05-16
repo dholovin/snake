@@ -23,17 +23,12 @@ namespace Snake.Views
         // TODO: think if redesigning to arrays make core shorter and logic simpler/more complicated?
         // private (int X, int Y)[] _snake; // ushort 0 to 65,535, 16 bit
         private List<(int X, int Y)> _snake = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
+        private List<(int X, int Y)> _food = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
 
         public event EventHandler OnGameOver;
         public event EventHandler OnFoodHit;
 
         public PlayerActionEnum CurrentAction { get; set; }
-        
-        private List<(int X, int Y)> _food = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
-        public List<(int X, int Y)> Food { 
-            get { return _food; }
-            set { _food = value;} 
-        }
 
         public MainView(IInputOutputService inputOutputService, IFigureService figureService)
         {
@@ -47,10 +42,10 @@ namespace Snake.Views
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken = default) {
-            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);
             
 
             for (int y = StartY; y < StartY + Height; y++)
@@ -91,6 +86,13 @@ namespace Snake.Views
             );
         }
 
+        public async Task Reset(CancellationToken cancellationToken = default)
+        {
+            _food.Clear();
+            CurrentAction = PlayerActionEnum.Right; // TODO: fire Event, maybe?
+            await Task.CompletedTask;
+        }
+
         // Gets executed on Tick until current game is over
         public async Task Tick(CancellationToken cancellationToken = default) 
         {
@@ -118,14 +120,14 @@ namespace Snake.Views
                 }
 
                 // Put food
-                while(Food.Count < 1)
+                while(_food.Count < 1)
                 {
                     newFood = (randomizer.Next(StartX + borderWidth, StartX + Width), 
                         randomizer.Next(StartY + borderWidth, StartY + Height - borderWidth));
 
                     if (!_snake.Contains(newFood))
                     {
-                        Food.Add(newFood);
+                        _food.Add(newFood);
                         await _inputOutputService.Print(newFood.X, newFood.Y, _foodPiece, cancellationToken);
                     }
                 }
@@ -144,9 +146,9 @@ namespace Snake.Views
                 await _inputOutputService.Print(head.X, head.Y, _snakePiece, cancellationToken);
                 _snake.Add(newHead);
                 
-                if (Food.Contains(newHead)) {
+                if (_food.Contains(newHead)) {
                     OnFoodHit?.Invoke(this, new EventArgs());
-                    Food.Remove(newHead);
+                    _food.Remove(newHead);
                 } else {
                     await _inputOutputService.Print(tail.X, tail.Y, " ", cancellationToken);
                     _snake.Remove(tail);

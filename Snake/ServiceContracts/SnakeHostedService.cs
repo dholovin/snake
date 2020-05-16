@@ -31,8 +31,8 @@ namespace Snake.ServiceContracts
                 while (playAgain && !cancellationToken.IsCancellationRequested)
                 {
                     var (initialLevel, screenSizeMultiplier) = await _game.AskForInitialSetup(cancellationToken);
-                    await _game.Initialize(initialLevel, screenSizeMultiplier, cancellationToken);
-                    var gameStatus = await _game.Play(cancellationToken);
+                    await _game.Initialize(screenSizeMultiplier, cancellationToken);
+                    var gameStatus = await _game.Play(initialLevel, cancellationToken);
                     playAgain = await _game.ShouldPlayAgain(cancellationToken);
                 }
                 
@@ -45,8 +45,6 @@ namespace Snake.ServiceContracts
                 // cancellationToken.ThrowIfCancellationRequested();
                 await _inputOutputService.Print(0, 0, ex.Message, CancellationToken.None);
                 await _inputOutputService.GetString(CancellationToken.None);
-                // System.Terminal.OutLine(ex.Message);
-                // System.Terminal.ReadLine();
             }
             // }, cancellationToken);
         }

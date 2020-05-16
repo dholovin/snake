@@ -17,10 +17,10 @@ namespace Snake.Views
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken) {
-            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);
 
             for (int y = StartY; y < StartY + Height; y++)
             {
@@ -38,7 +38,7 @@ namespace Snake.Views
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
 
-            await _inputOutputService.Print(StartX + 1, StartY + 1, "HELP VIEW",  cancellationToken);
+            await _inputOutputService.Print(StartX + 1, StartY + 1, "HELP",  cancellationToken);
         }
     } 
 }
