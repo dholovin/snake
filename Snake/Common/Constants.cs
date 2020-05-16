@@ -17,8 +17,12 @@ namespace Snake.Common
 
 
         // MESSAGES
+        public const string INPUT_LEVEL = "Your Level (0-9): ";
         public const string NOT_INITIALIZED_ERROR = "Game is not initialized.";
         public const string SCREEN_RESOLUTION_ERROR = "The game has been designed for screen {0} x {1} symbols. Please adjust terminal window size.";
         public const string SHOULD_PLAY_AGAIN = "Press 'Y' to play again. Press 'N' or ESC to exit: ";
+        public const string GameCopyright = "\r\nSNAKE (c) 2020 by Denys Holovin.\r\n\r\n" +
+                                            "Homepage url: https://github.com/dholovin/snake/ \r\n" +
+                                            "Inspired by Andriy S\'omak, https://github.com/semack/terminal-tetris/\r\n\r\n";
     }
 }

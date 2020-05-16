@@ -20,18 +20,12 @@ namespace Snake
                 .ConfigureServices(services =>
                     {
                         services.AddSingleton<IHostedService, SnakeHostedService>();
-                        services.AddTransient<IGame, SnakeGame>(); // Singleton?
+                        services.AddTransient<IGame, SnakeGame>();
                         services.AddTransient<IInputOutputService, TerminalInputOutputService>();
                         services.AddTransient<IFigureService, FigureService>();
                         services.AddTransient<MainView>();
                         services.AddTransient<HelpView>();
                         services.AddTransient<SummaryView>();
-                        // services.AddSingleton<TerminalIO>();
-                        // services.AddTransient<LeaderBoardScreen>();
-                        // services.AddTransient<GameScreen>();
-                        // services.AddTransient<HelpBoard>();
-                        // services.AddTransient<ScoreBoard>();
-                        // services.AddTransient<Glass>();
                     }
                 );
 

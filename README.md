@@ -10,4 +10,4 @@ You can reach me via my [email](mailto://denis.golovin@gmail.com).
 
 ## Thanks
 I would not start this for-fun project without [Andriy S'omak](https://github.com/semack/terminal-tetris) 
-who shared his implementation of Terminal-Tetris game and inspired me to pay my youth debt (Snake).
+who shared his implementation of Terminal-Tetris game and inspired me to pay my youth debt (Snake game).

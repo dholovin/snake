@@ -24,7 +24,6 @@ namespace Snake.ServiceContracts
                 SetRawMode(true, true);
 
                 IsCursorVisible = false;
-                // IsCursorVisible = true;
                 IsCursorBlinking = false;
             }
 
@@ -35,14 +34,12 @@ namespace Snake.ServiceContracts
 
         public async Task<string> GetString(CancellationToken cancellationToken = default)
         {
-            // TODO: analyze IsRawMode usage
-            // if (IsRawMode)
-            // {
-            //     SetRawMode(false, true);
-
-            //     IsCursorVisible = true;
-            //     IsCursorBlinking = true;
-            // }
+            if (IsRawMode)
+            {
+                SetRawMode(false, false);
+                IsCursorVisible = true;
+                IsCursorBlinking = true;
+            }
 
             var result = ReadLine();
 

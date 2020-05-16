@@ -24,15 +24,13 @@ namespace Snake.Views
         {
             _inputOutputService = inputOutputService;
             _figureService = figureService;
-            Score = 0; // default
-            Level = 0; // default
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken) {
-            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);
 
             for (int y = StartY; y < StartY + Height; y++)
             {
@@ -50,7 +48,14 @@ namespace Snake.Views
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
 
-            await _inputOutputService.Print(StartX + 1, StartY + 1, "SUMMARY VIEW",  cancellationToken);
+            await _inputOutputService.Print(StartX + 1, StartY + 1, "SUMMARY",  cancellationToken);
+        }
+
+        public async Task Reset(short initialLevel, CancellationToken cancellationToken = default)
+        {
+            Level = initialLevel;
+            Score = 0;
+            await Task.CompletedTask;
         }
     } 
 }

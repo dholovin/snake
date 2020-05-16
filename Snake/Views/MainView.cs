@@ -22,11 +22,8 @@ namespace Snake.Views
 
         // TODO: think if redesigning to arrays make core shorter and logic simpler/more complicated?
         // private (int X, int Y)[] _snake; // ushort 0 to 65,535, 16 bit
-        private List<(int X, int Y)> _snake = new List<(int X, int Y)>();
-        
-        // By design, one piece of food is  available at a time but this may change!
-        private List<(int X, int Y)> _food = new List<(int X, int Y)>();
-        
+        private List<(int X, int Y)> _snake = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
+        private List<(int X, int Y)> _food = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
 
         public event EventHandler OnGameOver;
         public event EventHandler OnFoodHit;
@@ -45,10 +42,10 @@ namespace Snake.Views
         }
 
         public async Task DrawBorder(CancellationToken cancellationToken = default) {
-            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);          // "▄";
-            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);    // "▀";
-            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);                // "▌";
-            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);              // "▐";
+            string topHorizontBlock = await _figureService.GetTopHorizontFigure(cancellationToken);
+            string bottomHorizontBlock = await _figureService.GetBottomHorizontFigure(cancellationToken);
+            string leftVertBlock = await _figureService.GetLeftVertFigure(cancellationToken);
+            string rightVertBlock = await _figureService.GetRightVertFigure(cancellationToken);
             
 
             for (int y = StartY; y < StartY + Height; y++)
@@ -87,6 +84,13 @@ namespace Snake.Views
             Task.WaitAll(
                 _snake.Select(coord => _inputOutputService.Print(coord.X, coord.Y, _snakePiece, cancellationToken)).ToArray()
             );
+        }
+
+        public async Task Reset(CancellationToken cancellationToken = default)
+        {
+            _food.Clear();
+            CurrentAction = PlayerActionEnum.Right; // TODO: fire Event, maybe?
+            await Task.CompletedTask;
         }
 
         // Gets executed on Tick until current game is over
