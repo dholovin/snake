@@ -27,10 +27,10 @@ namespace Snake
             _helpView = helpView;
             _summaryView = summaryView;
 
-            // TODO: Ensure we subscribe for events  only once
+            // Ensure we subscribe for events  only once so, inside constructor
             _mainView.OnFoodHit += (sender, args) => {
                 var newScore = _summaryView.Score + Constants.SCORE_INCREMENT;
-                if (newScore % Constants.SCORE_PER_LEVEL_INCREMENT == 0 && _summaryView.Level < 10)
+                if (newScore % Constants.SCORE_PER_LEVEL_INCREMENT == 0 && _summaryView.Level != 9)
                     _summaryView.Level++;
 
                 _summaryView.Score += Constants.SCORE_INCREMENT; 
@@ -141,16 +141,22 @@ namespace Snake
                     if (playerAction == PlayerActionEnum.Terminate)
                     {
                         // Ctrl+C - terminate program, pass false
-                        // _isGameActive = false; // TODO: check if THIS or Terminate() exits _mainView.Tick()
                         await Terminate(cancellationToken); 
                         break;
                     }
                     else if (playerAction == PlayerActionEnum.Quit)
                     {
                         // Ctrl+Z - quit program, pass true
-                        // _isGameActive = false; // TODO: check if THIS or Terminate() exits _mainView.Tick()
                         await Terminate(cancellationToken); 
                         break;
+                    }
+                    else if (playerAction == PlayerActionEnum.LevelUp)
+                    {
+                        if( _summaryView.Level != 9) 
+                        {
+                            _summaryView.Level++;
+                            await _summaryView.ShowScore(cancellationToken);
+                        }
                     }
                     else if (playerAction == PlayerActionEnum.ToggleHelpView)
                     {
@@ -166,7 +172,9 @@ namespace Snake
 
                             // Update game action
                             _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
-                            await _mainView.Tick(cancellationToken); // This would give a god speed if player holds a key :)
+
+                            // CAREFUL: Below code would result in 'god speed' if player holds a key but may cause concurrency issues!
+                            //await _mainView.Tick(cancellationToken); 
                         }
                     }
                     else 

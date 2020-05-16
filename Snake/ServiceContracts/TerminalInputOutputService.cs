@@ -104,8 +104,8 @@ namespace Snake.ServiceContracts
                 return await Task.FromResult(PlayerActionEnum.Quit);
             else if (key == 121 || key == 89)                               // 'y', 'Y' - replay
                 return await Task.FromResult(PlayerActionEnum.PlayAgain);
-            else if (key == 32)                                             // SPACE - toggle help view
-                return await Task.FromResult(PlayerActionEnum.ToggleHelpView);
+            else if (key == 32)                                             // SPACE - Level Up
+                return await Task.FromResult(PlayerActionEnum.LevelUp);
             else if (key == 68 || key == 52)                                // LeftArrow or '4'
                 return await Task.FromResult(PlayerActionEnum.Left);
             else if (key == 67 || key == 54)                                // RightArrow or '6'

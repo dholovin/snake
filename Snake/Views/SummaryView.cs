@@ -16,8 +16,7 @@ namespace Snake.Views
             get { return _score; }
             set {
                 _score = value;
-                _inputOutputService.Print(StartX + 1, StartY + 1, $"LEVEL {Level} : SCORE {value}", 
-                    CancellationToken.None);
+                ShowScore().Wait();
             }
         }
 
@@ -49,12 +48,16 @@ namespace Snake.Views
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
         }
-
         public async Task Reset(short initialLevel, CancellationToken cancellationToken = default)
         {
             Level = initialLevel;
             Score = 0;
             await Task.CompletedTask;
+        }
+        
+        public async Task ShowScore(CancellationToken cancellationToken = default)
+        {
+            await _inputOutputService.Print(StartX + 1, StartY + 1, $"LEVEL {Level} : SCORE {Score}", cancellationToken);
         }
     } 
 }

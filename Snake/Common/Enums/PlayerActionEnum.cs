@@ -10,6 +10,7 @@ namespace Snake.Common.Enums
         Quit,
         Terminate,
         ToggleHelpView,
-        PlayAgain
+        PlayAgain,
+        LevelUp
     }
 }

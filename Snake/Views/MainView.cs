@@ -19,6 +19,8 @@ namespace Snake.Views
         private readonly string _foodPiece;
         private readonly string _deadPiece;
 
+        private readonly Random _randomizer;
+
         // TODO: think if redesigning to arrays make core shorter and logic simpler/more complicated?
         // private (int X, int Y)[] _snake; // ushort 0 to 65,535, 16 bit
         private List<(int X, int Y)> _snake = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
@@ -26,7 +28,7 @@ namespace Snake.Views
 
         public event EventHandler OnGameOver;
         public event EventHandler OnFoodHit;
-
+        
         public PlayerActionEnum CurrentAction { get; set; }
 
         public MainView(IInputOutputService inputOutputService, IFigureService figureService)
@@ -34,6 +36,7 @@ namespace Snake.Views
             _inputOutputService = inputOutputService;
             _figureService = figureService;
             
+            _randomizer = new Random();
             _snakePiece = _figureService.GetSnakeFigure(CancellationToken.None).Result;
             _snakeHeadPiece = _figureService.GetSnakeHeadFigure(CancellationToken.None).Result;
             _foodPiece = _figureService.GetFoodFigure(CancellationToken.None).Result;
@@ -95,24 +98,23 @@ namespace Snake.Views
         // Gets executed on Tick until current game is over
         public async Task Tick(CancellationToken cancellationToken = default) 
         {
-            var randomizer = new Random();
-
             // TODO: do we need this check?
             if(!cancellationToken.IsCancellationRequested) {
-                //await _inputOutputService.Print(3, 3,  randomizer.Next(100), cancellationToken); // DEBUG
+                // await _inputOutputService.Print(3, 3,  _randomizer.Next(100), cancellationToken); // DEBUG
                 
                 var borderWidth = 1;
                 var head = _snake.Last();
                 var tail = _snake.First();
-                (int X, int Y) newHead = head;
+                (int X, int Y) newHead = (head.X, head.Y);
                 (int X, int Y) newFood;
 
                 // Game Over Conditions
-                if (head.X == StartX                                        // Hit left
-                        || head.X == StartX + Width                         // Hit right
+                if (head.X == StartX                                            // Hit left
+                        || head.X == StartX + Width                             // Hit right
                         || head.Y == StartY /*+ borderWidth*/                   // Hit top
                         || head.Y == StartY + Height /*- borderWidth*/          // Hit bottom
-                        || _snake.FindAll(x => x.Equals(head)).Count == 2)  // In itself
+                        //|| _snake.Count(snakePiece => snakePiece.X == newHead.X && snakePiece.Y == newHead.Y) == 2)  // In itself
+                        || _snake.Count(snakePiece => snakePiece.Equals(newHead)) >= 2)  // In itself
                 {
                     OnGameOver?.Invoke(this, new EventArgs());
                     return; // Important to break here, not just fire an event
@@ -121,8 +123,8 @@ namespace Snake.Views
                 // Put food
                 while(_food.Count < 1)
                 {
-                    newFood = (randomizer.Next(StartX + borderWidth, StartX + Width), 
-                        randomizer.Next(StartY + borderWidth, StartY + Height - borderWidth));
+                    newFood = (_randomizer.Next(StartX + borderWidth, StartX + Width), 
+                        _randomizer.Next(StartY + borderWidth, StartY + Height - borderWidth));
 
                     if (!_snake.Contains(newFood))
                     {
@@ -140,10 +142,10 @@ namespace Snake.Views
                     newHead = (head.X - 1, head.Y);
                 else if (CurrentAction == PlayerActionEnum.Up)
                     newHead = (head.X, head.Y - 1);
-
+                
+                _snake.Add(newHead);
                 await _inputOutputService.Print(newHead.X, newHead.Y, _snakeHeadPiece, cancellationToken);
                 await _inputOutputService.Print(head.X, head.Y, _snakePiece, cancellationToken);
-                _snake.Add(newHead);
                 
                 if (_food.Contains(newHead)) {
                     OnFoodHit?.Invoke(this, new EventArgs());
