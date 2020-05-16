@@ -15,12 +15,9 @@ namespace Snake
         private readonly MainView _mainView;
         private readonly HelpView _helpView;
         private readonly SummaryView _summaryView;
-
         private bool _initialized;
         private bool _isGameActive;
         private int _tickDelay => Constants.LEVEL_SPEED_MULTIPLIER * (10 - _summaryView.Level);
-
-        // private int _screenHeight;
 
         public SnakeGame(IInputOutputService io, MainView mainView, HelpView helpView, SummaryView summaryView) 
         {
@@ -32,25 +29,36 @@ namespace Snake
 
         public async Task<(short, short)> AskForInitialSetup(CancellationToken cancellationToken = default)
         {
-            // TODO: implement
-            return await Task.FromResult(((short)0, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
+            await _inputOutputService.Clear(cancellationToken);
+            await _inputOutputService.Print(Constants.PADDING, Constants.PADDING, Constants.INPUT_LEVEL, cancellationToken);
+            
+            short? playerLevel = null;
+            while (playerLevel == null)
+            {
+                short result = -1;
+                var input = await _inputOutputService.GetString(cancellationToken);
+                if (short.TryParse(input, out result) && result >= 0 && result <= 9) 
+                    playerLevel = result;
+            }
+
+            return await Task.FromResult(((short)playerLevel, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
         }
 
-        private async Task Initialize(short initialLevel, short screenSizeMultiplier, 
-            CancellationToken cancellationToken = default)
+        public async Task Initialize(short initialLevel, short screenSizeMultiplier, CancellationToken cancellationToken = default)
         {
             var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier + Constants.PADDING * 2;
             var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
 
             // Check screen size compatibility 
-            // var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
-            var (width, height) = (120,120);
+            // var (width, height) = (80, 24);
+            var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
             if (width < minWidth || height < minHeight) 
                 throw new ArgumentException(String.Format(Constants.SCREEN_RESOLUTION_ERROR, minWidth, minHeight));
 
             _summaryView.Level = initialLevel;
-            // TODO: fire some Event, maybe?
-            _mainView.CurrentAction = PlayerActionEnum.Right;
+            _summaryView.Score = 0;
+            _mainView.Food.Clear();
+            _mainView.CurrentAction = PlayerActionEnum.Right; // TODO: fire Event, maybe?
 
             // Initialize Views and set dimensions 
             Task.WaitAll(new Task[3] {
@@ -80,26 +88,16 @@ namespace Snake
             });
 
             // Subscribe to Events
-            _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
             _mainView.OnFoodHit += (sender, args) => { _summaryView.Score += Constants.SCORE_INCREMENT; };
-            //  _glass.OnFullLine += async (sender, args) =>
-            // {
-            //     _scoreBoard.Lines++;
-            //     _levelSwitch++;
-            //     if (_levelSwitch != Constants.LinesNextLevelSwitch) return;
-            //     await _scoreBoard.NextLevelAsync(cancellationToken);
-            // };
-            // _glass.OnNewBlock += (sender, block) => { _scoreBoard.Score += 10; };
+            _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
 
             _initialized = true;
         }
 
-        public async Task<GameStatus> Play(short initialLevel, short screenSizeMultiplier, 
-            CancellationToken cancellationToken = default)
+        public async Task<GameStatus> Play(CancellationToken cancellationToken = default)
         {
             if (!_initialized)
-                // throw new ArgumentException(Constants.NOT_INITIALIZED_ERROR);
-                await Initialize(initialLevel, screenSizeMultiplier, cancellationToken);
+                throw new ArgumentException(Constants.NOT_INITIALIZED_ERROR);
 
             // await IO.ClearAsync(cancellationToken);
             // await _helpBoard.ResetAsync(cancellationToken);
@@ -116,7 +114,7 @@ namespace Snake
                 await PlayerActionsHandler(cancellationToken);
             }, cancellationToken);
 
-            while (_initialized && _isGameActive && !cancellationToken.IsCancellationRequested)
+            while (_isGameActive && !cancellationToken.IsCancellationRequested)
             {
                 await _mainView.Tick(cancellationToken);
                 await Task.Delay(_tickDelay, cancellationToken);
@@ -133,7 +131,7 @@ namespace Snake
             // Task.Run(async () =>                        // .NET 4.5
             // // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
             // {
-                while (_initialized && _isGameActive && !cancellationToken.IsCancellationRequested)
+                while (_isGameActive && !cancellationToken.IsCancellationRequested)
                 {
                     var playerAction = await _inputOutputService.GetPlayerAction(cancellationToken);
 

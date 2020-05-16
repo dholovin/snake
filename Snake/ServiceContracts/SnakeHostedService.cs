@@ -25,38 +25,37 @@ namespace Snake.ServiceContracts
             // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
             try
             {
-                var exitGame = false;
-                
-                while (!exitGame && !cancellationToken.IsCancellationRequested)
+
+                var playAgain = true;
+
+                while (playAgain && !cancellationToken.IsCancellationRequested)
                 {
                     var (initialLevel, screenSizeMultiplier) = await _game.AskForInitialSetup(cancellationToken);
-                    // await _game.Initialize(initialLevel, screenSizeMultiplier, cancellationToken);
-                    var gameStatus = await _game.Play(initialLevel, screenSizeMultiplier, cancellationToken);
-
-                    exitGame = !(await _game.ShouldPlayAgain(cancellationToken));
+                    await _game.Initialize(initialLevel, screenSizeMultiplier, cancellationToken);
+                    var gameStatus = await _game.Play(cancellationToken);
+                    playAgain = await _game.ShouldPlayAgain(cancellationToken);
                 }
                 
                 await _game.Terminate(cancellationToken);
             }
             catch (OperationCanceledException ex)
             {
-                 // Expected after the worker performs:
+                // Expected after the worker performs:
                 // StopAsync(cancellationToken);
                 // cancellationToken.ThrowIfCancellationRequested();
-                // TODO: how to handle in non-terminal scenarios?
-                System.Terminal.OutLine(ex.Message);
-                System.Terminal.ReadLine();
+                await _inputOutputService.Print(0, 0, ex.Message, CancellationToken.None);
+                await _inputOutputService.GetString(CancellationToken.None);
+                // System.Terminal.OutLine(ex.Message);
+                // System.Terminal.ReadLine();
             }
             // }, cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken = default)
         {
-            var msg  = "Thank you for playing. Good bye.";
             await _inputOutputService.Clear(cancellationToken);
-            await _inputOutputService.Print(0, 0, msg, cancellationToken);
-            // await Task.Delay(2000); // would throw exception to host.RunTerminalAsync()
-            Thread.Sleep(2000);
+            await _inputOutputService.Print(0, Constants.MAIN_SCREEN_MIN_HEIGHT, Constants.GameCopyright, cancellationToken);
+            await Task.Delay(2000);
         }
     }
 }
