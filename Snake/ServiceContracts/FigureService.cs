@@ -31,15 +31,15 @@ namespace Snake.ServiceContracts
 
         public async Task<string> GetSnakeFigure(CancellationToken cancellationToken = default)
         {
-            //return await Task.FromResult("§");
-            return await Task.FromResult("░");
+            return await Task.FromResult("§");
+            //return await Task.FromResult("░");
             //return await Task.FromResult("▓");
             
         }
         public async Task<string> GetSnakeHeadFigure(CancellationToken cancellationToken = default)
         {
-            //return await Task.FromResult("☻");
-            return await Task.FromResult("█");
+            return await Task.FromResult("☻");
+            // return await Task.FromResult("█");
         }
 
         public async Task<string> GetFoodFigure(CancellationToken cancellationToken = default)

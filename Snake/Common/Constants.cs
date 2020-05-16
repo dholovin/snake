@@ -3,6 +3,7 @@ namespace Snake.Common
     public static class Constants
     {
         public const int SCORE_INCREMENT = 10; 
+        public const int SCORE_PER_LEVEL_INCREMENT = 10 * SCORE_INCREMENT;
         public const int LEVEL_SPEED_MULTIPLIER = 50;     // normal for level 1
         // public const int LEVEL_SPEED_MULTIPLIER = 10;    // fast
         //public const int LEVEL_SPEED_MULTIPLIER = 100;   // slow

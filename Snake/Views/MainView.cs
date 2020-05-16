@@ -18,7 +18,6 @@ namespace Snake.Views
         private readonly string _snakeHeadPiece;
         private readonly string _foodPiece;
         private readonly string _deadPiece;
-        
 
         // TODO: think if redesigning to arrays make core shorter and logic simpler/more complicated?
         // private (int X, int Y)[] _snake; // ushort 0 to 65,535, 16 bit

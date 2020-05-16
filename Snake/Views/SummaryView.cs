@@ -10,15 +10,16 @@ namespace Snake.Views
         private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
+        public short Level { get; set; }
         private int _score;
         public int Score { 
             get { return _score; }
             set {
                 _score = value;
-                _inputOutputService.Print(StartX + 1, StartY + Height - 2, "SCORE: " + value, CancellationToken.None);
+                _inputOutputService.Print(StartX + 1, StartY + 1, $"LEVEL {Level} : SCORE {value}", 
+                    CancellationToken.None);
             }
         }
-        public short Level { get; set; }
 
         public SummaryView(IInputOutputService inputOutputService, IFigureService figureService)
         {
@@ -47,8 +48,6 @@ namespace Snake.Views
                 // Bottom
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
-
-            await _inputOutputService.Print(StartX + 1, StartY + 1, "SUMMARY",  cancellationToken);
         }
 
         public async Task Reset(short initialLevel, CancellationToken cancellationToken = default)

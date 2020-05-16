@@ -29,6 +29,10 @@ namespace Snake
 
             // TODO: Ensure we subscribe for events  only once
             _mainView.OnFoodHit += (sender, args) => {
+                var newScore = _summaryView.Score + Constants.SCORE_INCREMENT;
+                if (newScore % Constants.SCORE_PER_LEVEL_INCREMENT == 0 && _summaryView.Level < 10)
+                    _summaryView.Level++;
+
                 _summaryView.Score += Constants.SCORE_INCREMENT; 
                 //  _DEBUG_OnFoodHits++;
                 //  _inputOutputService.Print(0,0, _DEBUG_OnFoodHits ,CancellationToken.None);
@@ -161,7 +165,7 @@ namespace Snake
                             && !(_mainView.CurrentAction == PlayerActionEnum.Down && playerAction == PlayerActionEnum.Up)) {
 
                             // Update game action
-                            _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
+                            // _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
                             await _mainView.Tick(cancellationToken); // This would give a god speed if player holds a key :)
                         }
                     }
