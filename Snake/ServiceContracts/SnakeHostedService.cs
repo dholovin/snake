@@ -29,9 +29,9 @@ namespace Snake.ServiceContracts
 
                 while (playAgain && !cancellationToken.IsCancellationRequested)
                 {
-                    var (initialLevel, screenSizeMultiplier) = await _game.AskForInitialSetup(cancellationToken);
+                    var (initialSpeed, screenSizeMultiplier) = await _game.AskForInitialSetup(cancellationToken);
                     await _game.Initialize(screenSizeMultiplier, cancellationToken);
-                    var gameStatus = await _game.Play(initialLevel, cancellationToken);
+                    var gameStatus = await _game.Play(initialSpeed, cancellationToken);
                     playAgain = await _game.ShouldPlayAgain(cancellationToken);
                 }
                 
@@ -42,14 +42,14 @@ namespace Snake.ServiceContracts
                 // Expected after the worker performs:
                 // StopAsync(cancellationToken);
                 // cancellationToken.ThrowIfCancellationRequested();
-                await _inputOutputService.Print(0, 0, ex.Message, cancellationToken);
-                await _inputOutputService.GetString(cancellationToken);
+                // await _inputOutputService.Print(0, 0, ex.Message, cancellationToken);
+                // await _inputOutputService.GetString(cancellationToken);
                 await _inputOutputService.Terminate(cancellationToken);
             }
             catch (Exception ex)
             {
-                await _inputOutputService.Print(0, 0, ex.Message, cancellationToken);
-                await _inputOutputService.GetString(cancellationToken);
+                // await _inputOutputService.Print(0, 0, ex.Message, cancellationToken);
+                // await _inputOutputService.GetString(cancellationToken);
                 await _inputOutputService.Terminate(cancellationToken);
             }
             // }, cancellationToken);

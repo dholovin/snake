@@ -10,7 +10,7 @@ namespace Snake.Views
         private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
-        public short Level { get; set; }
+        public short Speed { get; set; }
         private int _score;
         public int Score { 
             get { return _score; }
@@ -48,16 +48,21 @@ namespace Snake.Views
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
         }
-        public async Task Reset(short initialLevel, CancellationToken cancellationToken = default)
+
+        public async Task Reset(short initialSpeed, CancellationToken cancellationToken = default)
         {
-            Level = initialLevel;
+            Speed = initialSpeed;
             Score = 0;
             await Task.CompletedTask;
         }
         
         public async Task ShowScore(CancellationToken cancellationToken = default)
         {
-            await _inputOutputService.Print(StartX + 1, StartY + 1, $"LEVEL {Level} : SCORE {Score}", cancellationToken);
+            Task.WaitAll(new Task[2] {
+                _inputOutputService.Print(StartX + 1, StartY + 1, $"SCORE : {Score}", cancellationToken),
+                _inputOutputService.Print(StartX + 1, StartY + 2, $"SPEED : {Speed}", cancellationToken)
+            });
+            await Task.CompletedTask;
         }
     } 
 }

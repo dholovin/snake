@@ -38,7 +38,12 @@ namespace Snake.Views
                 await _inputOutputService.Print(x, StartY + Height, bottomHorizontBlock,  cancellationToken);
             }
 
-            await _inputOutputService.Print(StartX + 1, StartY + 1, "HELP",  cancellationToken);
+            Task.WaitAll(new Task[3] {
+                _inputOutputService.Print(StartX + 1, StartY + 1, "4: LEFT  6: RIGHT  8: UP  2: DOWN", cancellationToken),
+                _inputOutputService.Print(StartX + 1, StartY + 2, "CTRL + Z or CTRL + C: QUIT", cancellationToken),
+                _inputOutputService.Print(StartX + 1, StartY + 3, "SPACE: SPEED UP", cancellationToken)
+            });
+            await Task.CompletedTask;
         }
     } 
 }

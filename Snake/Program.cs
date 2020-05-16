@@ -24,8 +24,8 @@ namespace Snake
                         services.AddTransient<IInputOutputService, TerminalInputOutputService>();
                         services.AddTransient<IFigureService, FigureService>();
                         services.AddTransient<MainView>();
-                        services.AddTransient<HelpView>();
                         services.AddTransient<SummaryView>();
+                        services.AddTransient<HelpView>();
                     }
                 );
 

@@ -13,25 +13,25 @@ namespace Snake
     {
         private readonly IInputOutputService _inputOutputService;
         private readonly MainView _mainView;
-        private readonly HelpView _helpView;
         private readonly SummaryView _summaryView;
+        private readonly HelpView _helpView;
         private bool _initialized;
         private bool _isGameActive;
         private int _DEBUG_OnFoodHits = 0;
-        private int _tickDelay => Constants.LEVEL_SPEED_MULTIPLIER * (10 - _summaryView.Level);
+        private int _tickDelay => Constants.SPEED_MULTIPLIER * (10 - _summaryView.Speed);
 
-        public SnakeGame(IInputOutputService io, MainView mainView, HelpView helpView, SummaryView summaryView) 
+        public SnakeGame(IInputOutputService io, MainView mainView, SummaryView summaryView, HelpView helpView) 
         {
             _inputOutputService = io;
             _mainView = mainView;
-            _helpView = helpView;
             _summaryView = summaryView;
+            _helpView = helpView;
 
             // Ensure we subscribe for events  only once so, inside constructor
             _mainView.OnFoodHit += (sender, args) => {
                 var newScore = _summaryView.Score + Constants.SCORE_INCREMENT;
-                if (newScore % Constants.SCORE_PER_LEVEL_INCREMENT == 0 && _summaryView.Level != 9)
-                    _summaryView.Level++;
+                if (newScore % Constants.SCORE_PER_SPEED_INCREMENT == 0 && _summaryView.Speed != 9)
+                    _summaryView.Speed++;
 
                 _summaryView.Score += Constants.SCORE_INCREMENT; 
                 //  _DEBUG_OnFoodHits++;
@@ -43,18 +43,18 @@ namespace Snake
         public async Task<(short, short)> AskForInitialSetup(CancellationToken cancellationToken = default)
         {
             await _inputOutputService.Clear(cancellationToken);
-            await _inputOutputService.Print(Constants.PADDING, Constants.PADDING, Constants.INPUT_LEVEL, cancellationToken);
+            await _inputOutputService.Print(Constants.PADDING, Constants.PADDING, Constants.INPUT_SPEED, cancellationToken);
             
-            short? playerLevel = null;
-            while (playerLevel == null)
+            short? playerSpeed = null;
+            while (playerSpeed == null)
             {
                 short result = -1;
                 var input = await _inputOutputService.GetString(cancellationToken);
                 if (short.TryParse(input, out result) && result >= 0 && result <= 9) 
-                    playerLevel = result;
+                    playerSpeed = result;
             }
 
-            return await Task.FromResult(((short)playerLevel, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
+            return await Task.FromResult(((short)playerSpeed, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
         }
 
         public async Task Initialize(short screenSizeMultiplier, CancellationToken cancellationToken = default)
@@ -73,7 +73,7 @@ namespace Snake
             // Initialize Views and set dimensions 
             Task.WaitAll(new Task[3] {
                 // Top Left View
-                _helpView.SetDimensions(
+                _summaryView.SetDimensions(
                     Constants.PADDING, 
                     Constants.PADDING,
                     Constants.HELP_PANE_WIDTH,
@@ -85,27 +85,27 @@ namespace Snake
                     Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier,
                     Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier, cancellationToken),
                 // Bottom View
-                _summaryView.SetDimensions(
+                _helpView.SetDimensions(
                     Constants.PADDING,
                     Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING,
                     Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier,
                     Constants.SUMMARY_PANE_HEIGHT, cancellationToken)
             });
             Task.WaitAll(new Task[3] {
-                _helpView.DrawBorder(cancellationToken),
+                _summaryView.DrawBorder(cancellationToken),
                 _mainView.DrawBorder(cancellationToken),
-                _summaryView.DrawBorder(cancellationToken)
+                _helpView.DrawBorder(cancellationToken)
             });
 
             _initialized = true;
         }
 
-        public async Task<GameStatus> Play(short initialLevel, CancellationToken cancellationToken = default)
+        public async Task<GameStatus> Play(short initialSpeed, CancellationToken cancellationToken = default)
         {
             if (!_initialized)
                 throw new ArgumentException(Constants.NOT_INITIALIZED_ERROR);
 
-            await _summaryView.Reset(initialLevel, cancellationToken);            
+            await _summaryView.Reset(initialSpeed, cancellationToken);            
             await _mainView.Reset(cancellationToken);
 
             _isGameActive = true;
@@ -150,11 +150,11 @@ namespace Snake
                         await Terminate(cancellationToken); 
                         break;
                     }
-                    else if (playerAction == PlayerActionEnum.LevelUp)
+                    else if (playerAction == PlayerActionEnum.SpeedUp)
                     {
-                        if( _summaryView.Level != 9) 
+                        if( _summaryView.Speed != 9) 
                         {
-                            _summaryView.Level++;
+                            _summaryView.Speed++;
                             await _summaryView.ShowScore(cancellationToken);
                         }
                     }
@@ -187,7 +187,7 @@ namespace Snake
 
         public async Task<bool> ShouldPlayAgain(CancellationToken cancellationToken = default) 
         {
-            await _inputOutputService.Print(_summaryView.StartX + 1, _summaryView.StartY + _summaryView.Height - 1, 
+            await _inputOutputService.Print(_helpView.StartX + 1, _helpView.StartY + _helpView.Height - 1, 
                 Constants.SHOULD_PLAY_AGAIN, cancellationToken);
 
             var playerAction = PlayerActionEnum.None;
@@ -213,14 +213,14 @@ namespace Snake
                 return await Task.FromResult(new GameStatus()
                     {
                         IsActive = isActive,
-                        Level = _summaryView.Level,
-                        Score = _summaryView.Score
+                        Speed = summaryView.Speed,
+                        Score = summaryView.Score
                     });
             else {
                 return await Task.FromResult(new GameStatus()
                     {
                         IsActive = false,
-                        Level = 0,
+                        Speed = 0,
                         Score = 0
                     });
             }

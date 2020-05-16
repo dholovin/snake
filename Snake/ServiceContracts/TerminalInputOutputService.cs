@@ -104,8 +104,8 @@ namespace Snake.ServiceContracts
                 return await Task.FromResult(PlayerActionEnum.Quit);
             else if (key == 121 || key == 89)                               // 'y', 'Y' - replay
                 return await Task.FromResult(PlayerActionEnum.PlayAgain);
-            else if (key == 32)                                             // SPACE - Level Up
-                return await Task.FromResult(PlayerActionEnum.LevelUp);
+            else if (key == 32)                                             // SPACE - Speed Up
+                return await Task.FromResult(PlayerActionEnum.SpeedUp);
             else if (key == 68 || key == 52)                                // LeftArrow or '4'
                 return await Task.FromResult(PlayerActionEnum.Left);
             else if (key == 67 || key == 54)                                // RightArrow or '6'
@@ -116,23 +116,6 @@ namespace Snake.ServiceContracts
                 return await Task.FromResult(PlayerActionEnum.Up);
             else
                 return await Task.FromResult(PlayerActionEnum.None);            
-
-            // else if (key == 48) // 0 - show/hide help screen
-            //     await _helpBoard.SetVisibleAsync(!_helpBoard.Visible, cancellationToken);
-            // else if (key == 49) // 1 - show/hide next figure
-            //     await _glass.ShowHideNextAsync(cancellationToken);
-            // else if (key == 52) // 4 - next level
-            //     await _scoreBoard.NextLevelAsync(cancellationToken);
-            // else if (key == 55 || key == 68) // 7 - left 
-            //     playerAction = PlayerActionEnum.Left;
-            // else if (key == 57 || key == 67) // 9 - right 
-            //     playerAction = PlayerActionEnum.Right;
-            // else if (key == 56 || key == 65) // 8 - rotate 
-            //     playerAction = PlayerActionEnum.Rotate;
-            // else if (key == 53 || key == 66) // 5 - soft drop 
-            //     playerAction = PlayerActionEnum.SoftDrop;
-            // else if (key == 32) // SPACE - drop
-            //     playerAction = PlayerActionEnum.Drop;
         }
     }
 }
