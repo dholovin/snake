@@ -165,7 +165,7 @@ namespace Snake
                             && !(_mainView.CurrentAction == PlayerActionEnum.Down && playerAction == PlayerActionEnum.Up)) {
 
                             // Update game action
-                            // _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
+                            _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
                             await _mainView.Tick(cancellationToken); // This would give a god speed if player holds a key :)
                         }
                     }
