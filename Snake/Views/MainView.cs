@@ -21,7 +21,7 @@ namespace Snake.Views
 
         private readonly Random _randomizer;
 
-        // TODO: think if redesigning to arrays make core shorter and logic simpler/more complicated?
+        // TODO: challenge yourself and redesigning to use arrays ;)
         // private (int X, int Y)[] _snake; // ushort 0 to 65,535, 16 bit
         private List<(int X, int Y)> _snake = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
         private List<(int X, int Y)> _food = new List<(int X, int Y)>(); // TODO: Ensure thread-safety
@@ -98,10 +98,8 @@ namespace Snake.Views
         // Gets executed on Tick until current game is over
         public async Task Tick(CancellationToken cancellationToken = default) 
         {
-            // TODO: do we need this check?
-            if(!cancellationToken.IsCancellationRequested) {
-                // await _inputOutputService.Print(3, 3,  _randomizer.Next(100), cancellationToken); // DEBUG
-                
+            if(!cancellationToken.IsCancellationRequested) 
+            {
                 var borderWidth = 1;
                 var head = _snake.Last();
                 var tail = _snake.First();
@@ -109,15 +107,14 @@ namespace Snake.Views
                 (int X, int Y) newFood;
 
                 // Game Over Conditions
-                if (head.X == StartX                                            // Hit left
-                        || head.X == StartX + Width                             // Hit right
-                        || head.Y == StartY /*+ borderWidth*/                   // Hit top
-                        || head.Y == StartY + Height /*- borderWidth*/          // Hit bottom
-                        //|| _snake.Count(snakePiece => snakePiece.X == newHead.X && snakePiece.Y == newHead.Y) == 2)  // In itself
+                if (head.X == StartX                    // Hit left
+                        || head.X == StartX + Width     // Hit right
+                        || head.Y == StartY             // Hit top
+                        || head.Y == StartY + Height    // Hit bottom
                         || _snake.Count(snakePiece => snakePiece.Equals(newHead)) >= 2)  // In itself
                 {
                     OnGameOver?.Invoke(this, new EventArgs());
-                    return; // Important to break here, not just fire an event
+                    return;
                 }
 
                 // Put food
@@ -147,6 +144,7 @@ namespace Snake.Views
                 await _inputOutputService.Print(newHead.X, newHead.Y, _snakeHeadPiece, cancellationToken);
                 await _inputOutputService.Print(head.X, head.Y, _snakePiece, cancellationToken);
                 
+                // Grow Snake and Update Score
                 if (_food.Contains(newHead)) {
                     OnFoodHit?.Invoke(this, new EventArgs());
                     _food.Remove(newHead);

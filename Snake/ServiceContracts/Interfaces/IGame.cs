@@ -6,8 +6,8 @@ namespace Snake.ServiceContracts.Interfaces
 {
     public interface IGame
     {
-        public Task<(short, short)> AskForInitialSetup(CancellationToken cancellationToken);
-        public Task Initialize(short screenSizeMultiplier, CancellationToken cancellationToken);
+        public Task<short> AskForInitialSetup(CancellationToken cancellationToken);
+        public Task Initialize(CancellationToken cancellationToken);
         public Task<GameStatus> Play(short initialSpeed, CancellationToken cancellationToken);
         public Task<bool> ShouldPlayAgain(CancellationToken cancellationToken);
         public Task Terminate(CancellationToken cancellationToken);

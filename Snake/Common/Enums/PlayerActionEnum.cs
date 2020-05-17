@@ -9,7 +9,6 @@ namespace Snake.Common.Enums
         Down,
         Quit,
         Terminate,
-        ToggleHelpView,
         PlayAgain,
         SpeedUp
     }

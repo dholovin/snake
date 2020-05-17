@@ -17,8 +17,8 @@ namespace Snake
         private readonly HelpView _helpView;
         private bool _initialized;
         private bool _isGameActive;
-        private int _DEBUG_OnFoodHits = 0;
         private int _tickDelay => Constants.SPEED_MULTIPLIER * (10 - _summaryView.Speed);
+        private int _DEBUG_OnFoodHits = 0;
 
         public SnakeGame(IInputOutputService io, MainView mainView, SummaryView summaryView, HelpView helpView) 
         {
@@ -40,7 +40,7 @@ namespace Snake
             _mainView.OnGameOver += (sender, args) => { _isGameActive = false; };
         }
 
-        public async Task<(short, short)> AskForInitialSetup(CancellationToken cancellationToken = default)
+        public async Task<short> AskForInitialSetup(CancellationToken cancellationToken = default)
         {
             await _inputOutputService.Clear(cancellationToken);
             await _inputOutputService.Print(Constants.PADDING, Constants.PADDING, Constants.INPUT_SPEED, cancellationToken);
@@ -54,41 +54,40 @@ namespace Snake
                     playerSpeed = result;
             }
 
-            return await Task.FromResult(((short)playerSpeed, (short)Constants.MAIN_SCREEN_SIZE_MULTIPLIER));
+            return await Task.FromResult(((short)playerSpeed));
         }
 
-        public async Task Initialize(short screenSizeMultiplier, CancellationToken cancellationToken = default)
+        public async Task Initialize(CancellationToken cancellationToken = default)
         {
-            var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier + Constants.PADDING * 2;
-            var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
+            var minWidth = Constants.HELP_PANE_WIDTH + Constants.MAIN_SCREEN_MIN_WIDTH + Constants.PADDING * 2;
+            var minHeight = Constants.MAIN_SCREEN_MIN_HEIGHT + Constants.PADDING * 2 + Constants.SUMMARY_PANE_HEIGHT;
 
             // Check screen size compatibility 
-            // var (width, height) = (80, 24);
             var (width, height) = await _inputOutputService.GetViewportDimensions(cancellationToken);
             if (width < minWidth || height < minHeight) 
                 throw new ArgumentException(String.Format(Constants.SCREEN_RESOLUTION_ERROR, minWidth, minHeight));
 
             await _inputOutputService.Clear(cancellationToken);
 
-            // Initialize Views and set dimensions 
+            // Initialize Views and set Dimensions 
             Task.WaitAll(new Task[3] {
                 // Top Left View
                 _summaryView.SetDimensions(
                     Constants.PADDING, 
                     Constants.PADDING,
                     Constants.HELP_PANE_WIDTH,
-                    Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier, cancellationToken),
+                    Constants.MAIN_SCREEN_MIN_HEIGHT, cancellationToken),
                 // Top Right View
                 _mainView.SetDimensions(
                     Constants.PADDING + Constants.HELP_PANE_WIDTH + Constants.PADDING, 
                     Constants.PADDING,
-                    Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier,
-                    Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier, cancellationToken),
+                    Constants.MAIN_SCREEN_MIN_WIDTH,
+                    Constants.MAIN_SCREEN_MIN_HEIGHT, cancellationToken),
                 // Bottom View
                 _helpView.SetDimensions(
                     Constants.PADDING,
-                    Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT * screenSizeMultiplier + Constants.PADDING,
-                    Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH * screenSizeMultiplier,
+                    Constants.PADDING + Constants.MAIN_SCREEN_MIN_HEIGHT + Constants.PADDING,
+                    Constants.HELP_PANE_WIDTH + Constants.PADDING + Constants.MAIN_SCREEN_MIN_WIDTH,
                     Constants.SUMMARY_PANE_HEIGHT, cancellationToken)
             });
             Task.WaitAll(new Task[3] {
@@ -110,11 +109,11 @@ namespace Snake
 
             _isGameActive = true;
 
-            // TODO: test Exception Handling for different approaches
-            Task.Run(async () =>                        // .NET 4.5
-            // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
+            Task.Run(async () => 
             {
                 await PlayerActionsHandler(cancellationToken);
+                // NOTE: next line may help to mitigate concurrency issues, if any.
+                //await Task.Delay(_tickDelay, cancellationToken); 
             }, cancellationToken);
 
             while (_isGameActive && !cancellationToken.IsCancellationRequested)
@@ -123,17 +122,11 @@ namespace Snake
                 await Task.Delay(_tickDelay, cancellationToken);
             }
 
-            // var playerName = await ReadPlayerNameAsync(cancellationToken);
-            // var result = await _scoreBoard.ToLeaderBoardItemAsync(playerName, cancellationToken);
             return await Task.FromResult(await GetGameStatus(_isGameActive, _summaryView, cancellationToken));
         }
 
         private async Task PlayerActionsHandler(CancellationToken cancellationToken = default)
         {
-            // // TODO: check difference between Exception Handling
-            // Task.Run(async () =>                        // .NET 4.5
-            // // ThreadPool.QueueUserWorkItem(async state => // .NET 1.1
-            // {
                 while (_isGameActive && !cancellationToken.IsCancellationRequested)
                 {
                     var playerAction = await _inputOutputService.GetPlayerAction(cancellationToken);
@@ -157,11 +150,7 @@ namespace Snake
                             _summaryView.Speed++;
                             await _summaryView.ShowScore(cancellationToken);
                         }
-                    }
-                    else if (playerAction == PlayerActionEnum.ToggleHelpView)
-                    {
-                        // TODO: implement Toggle help view
-                    }
+                    } 
                     else if (playerAction != PlayerActionEnum.None)
                     {
                         // Ignore PlayerActions geometrically opposite to current action
@@ -170,17 +159,15 @@ namespace Snake
                             && !(_mainView.CurrentAction == PlayerActionEnum.Up && playerAction == PlayerActionEnum.Down)
                             && !(_mainView.CurrentAction == PlayerActionEnum.Down && playerAction == PlayerActionEnum.Up)) {
 
-                            // Update game action
                             _mainView.CurrentAction = playerAction; // TODO: fire some Event, maybe?
 
-                            // CAREFUL: Below code would result in 'god speed' if player holds a key but may cause concurrency issues!
-                            //await _mainView.Tick(cancellationToken); 
+                            // NOTE: Below code would result in 'god speed' if player holds a key BUT may cause concurrency issues
+                            await _mainView.Tick(cancellationToken); 
                         }
                     }
                     else 
                         continue;
                 }
-            // }, cancellationToken);
 
             await Task.CompletedTask;
         }

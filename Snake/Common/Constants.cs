@@ -10,7 +10,6 @@ namespace Snake.Common
 
         // Layout
         public const int PADDING = 1;
-        public const int MAIN_SCREEN_SIZE_MULTIPLIER = 1;
         public const int HELP_PANE_WIDTH = 20;
         public const int SUMMARY_PANE_HEIGHT = 5;
         public const int MAIN_SCREEN_MIN_WIDTH = 40;
