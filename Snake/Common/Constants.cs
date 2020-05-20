@@ -2,19 +2,23 @@ namespace Snake.Common
 {
     public static class Constants
     {
-        public const int SCORE_INCREMENT = 10; 
-        public const int SCORE_PER_SPEED_INCREMENT = 10 * SCORE_INCREMENT;
-        public const int SPEED_MULTIPLIER = 50;     // normal
-        // public const int SPEED_MULTIPLIER = 10;    // fast
-        //public const int SPEED_MULTIPLIER = 100;   // slow
+        public const ushort SCORE_INCREMENT = 10; 
+        public const ushort SCORE_PER_SPEED_INCREMENT = 10 * SCORE_INCREMENT;
+        public const ushort SPEED_MULTIPLIER = 50;     // normal
+        // public const ushort SPEED_MULTIPLIER = 10;    // fast
+        //public const ushort SPEED_MULTIPLIER = 100;   // slow
+
+        public const ushort BORDER_WIDTH = 1;
+        public const ushort MAX_NORMAL_FOOD_COUNT = 5;
+        public const ushort MAX_DEAD_FOOD_COUNT = 2;
+
 
         // Layout
-        public const int PADDING = 1;
-        public const int HELP_PANE_WIDTH = 20;
-        public const int SUMMARY_PANE_HEIGHT = 5;
-        public const int MAIN_SCREEN_MIN_WIDTH = 40;
-        public const int MAIN_SCREEN_MIN_HEIGHT = 20;
-
+        public const ushort PADDING = 1;
+        public const ushort HELP_PANE_WIDTH = 20;
+        public const ushort SUMMARY_PANE_HEIGHT = 5;
+        public const ushort MAIN_SCREEN_MIN_WIDTH = 40;
+        public const ushort MAIN_SCREEN_MIN_HEIGHT = 20;
 
         // MESSAGES
         public const string INPUT_SPEED = "Your Speed (0-9): ";
