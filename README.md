@@ -6,7 +6,7 @@ Developed for fun and to practice .Net Core 3.1.
 Please see [LICENSE.md](LICENSE.md).
 
 ### How it looks right now
-[![Snake]](https://www.youtube.com/watch?v=RRwygd_7nsk)
+[![Snake](https://img.youtube.com/vi/RRwygd_7nsk/0.jpg)](https://www.youtube.com/watch?v=RRwygd_7nsk)
 
 
 ## Known Issues
