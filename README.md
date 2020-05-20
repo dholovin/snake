@@ -5,6 +5,10 @@ Developed for fun and to practice .Net Core 3.1.
 ## License
 Please see [LICENSE.md](LICENSE.md).
 
+### How it looks right now
+[![Snake]](https://www.youtube.com/watch?v=RRwygd_7nsk)
+
+
 ## Known Issues
 - Lacks thread-safety (List<T> is used).
 - Terminates game when 'n' or 'y' is pressed.
