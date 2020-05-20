@@ -14,11 +14,12 @@ namespace Snake.Views
         private readonly IInputOutputService _inputOutputService;
         private readonly IFigureService _figureService;
 
+        private const ushort BORDER_WIDTH = 1;
+        private const ushort MAX_FOOD_COUNT = 5;
         private readonly string _snakePiece;
         private readonly string _snakeHeadPiece;
         private readonly string _foodPiece;
         private readonly string _deadPiece;
-
         private readonly Random _randomizer;
 
         // TODO: challenge yourself and redesigning to use arrays ;)
@@ -118,17 +119,7 @@ namespace Snake.Views
                 }
 
                 // Put food
-                while(_food.Count < 1)
-                {
-                    newFood = (_randomizer.Next(StartX + borderWidth, StartX + Width), 
-                        _randomizer.Next(StartY + borderWidth, StartY + Height - borderWidth));
-
-                    if (!_snake.Contains(newFood))
-                    {
-                        _food.Add(newFood);
-                        await _inputOutputService.Print(newFood.X, newFood.Y, _foodPiece, cancellationToken);
-                    }
-                }
+                await AddFood(cancellationToken);
 
                 // Move Snake
                 if (CurrentAction == PlayerActionEnum.Right)
@@ -156,5 +147,45 @@ namespace Snake.Views
 
             await Task.CompletedTask;
         }
-    } 
+
+        private async Task AddFood(CancellationToken cancellationToken = default)
+        {
+            // Add Normal Food
+            while(_food.Count < MAX_FOOD_COUNT)
+            {
+                (int X, int Y) newFood = (_randomizer.Next(StartX + BORDER_WIDTH, StartX + Width), 
+                    _randomizer.Next(StartY + BORDER_WIDTH, StartY + Height - BORDER_WIDTH));
+                
+                if (!_snake.Contains(newFood) && !_food.Contains(newFood))
+                {
+                    await _inputOutputService.Print(newFood.X, newFood.Y, _foodPiece, cancellationToken);
+                    _food.Add(newFood);
+                }
+            }
+
+            // // Add Death Block(s)  
+            // while(_deadFood.Count < DEAD_FOOD_COUNT)
+            // {
+            //     var snakeHead = _snake.Last();  
+            //     (int X, int Y) deadFood = (
+            //         _randomizer.Next(StartX + BORDER_WIDTH, StartX + Width), 
+            //         _randomizer.Next(StartY + BORDER_WIDTH, StartY + Height - BORDER_WIDTH));
+
+            //     // Not closer than 5 symbols to head towards CurrentAction 
+            //     if (CurrentAction == PlayerActionEnum.Left && deadFood.X >= snakeHead.X - 5 && deadFood.X <= snakeHead.X
+            //         || CurrentAction == PlayerActionEnum.Right && deadFood.X <= snakeHead.X + 5 && deadFood.X >= snakeHead.X
+            //         || CurrentAction == PlayerActionEnum.Up && deadFood.Y >= snakeHead.Y - 5 && deadFood.Y <= snakeHead.Y
+            //         || CurrentAction == PlayerActionEnum.Down && deadFood.Y >= snakeHead.Y + 5  && deadFood.Y >= snakeHead.Y
+            //         || _snake.Contains(deadFood)
+            //         || _food.Contains(deadFood)
+            //         || _deadFood.Contains(deadFood))
+            //     {
+            //         continue;
+            //     }
+                
+            //     await _inputOutputService.Print(deadFood.X, deadFood.Y, _deadFoodPiece, cancellationToken);
+            //     _deadFood.Add(deadFood);
+            // }
+        }
+    }
 }
