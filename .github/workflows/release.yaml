@@ -33,6 +33,8 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         tag_name: ${{ env.VERSION }}
         release_name: Release ${{ env.VERSION }}
@@ -41,6 +43,8 @@ jobs:
     - name: Upload Release Asset win-x64 
       id: upload-release-asset-win-x64
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: snake-win-x64.zip
