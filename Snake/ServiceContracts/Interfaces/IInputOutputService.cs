@@ -10,9 +10,9 @@ namespace Snake.ServiceContracts.Interfaces
         public Task Clear(CancellationToken cancellationToken);
         public Task Print(object message, CancellationToken cancellationToken);   
         public Task Print(int x, int y, object message, CancellationToken cancellationToken);
-        //public Task Print(int x, int y, int width, string message, CancellationToken cancellationToken);
+        public Task Print(int x, int y, (byte R, byte G, byte B) color, object message, CancellationToken cancellationToken);
         public Task PrintAtNextLine(object message, CancellationToken cancellationToken);
-        public Task PrintAtNextLine(int x, int y, object message, CancellationToken cancellationToken);
+        public Task PrintAtNextLine(int x, int y, (byte R, byte G, byte B) color, object message, CancellationToken cancellationToken);
         
         public Task<byte?> GetKey(CancellationToken cancellationToken);
         public Task<string> GetString(CancellationToken cancellationToken);

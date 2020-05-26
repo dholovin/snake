@@ -163,7 +163,7 @@ namespace Snake.Views
                 
                 if (!_snake.Contains(newFood) && !_food.Contains(newFood))
                 {
-                    await _inputOutputService.Print(newFood.X, newFood.Y, _foodPiece, cancellationToken);
+                    await _inputOutputService.Print(newFood.X, newFood.Y, (255, 255, 0), _foodPiece, cancellationToken);
                     _food.Add(newFood);
                 }
             }
@@ -177,10 +177,10 @@ namespace Snake.Views
                     _randomizer.Next(StartY + Constants.BORDER_WIDTH, StartY + Height - Constants.BORDER_WIDTH));
 
                 // Not closer than 5 symbols to head towards CurrentAction 
-                if (CurrentAction == PlayerActionEnum.Left && deadFood.X >= snakeHead.X - 5 && deadFood.X <= snakeHead.X
-                    || CurrentAction == PlayerActionEnum.Right && deadFood.X <= snakeHead.X + 5 && deadFood.X >= snakeHead.X
-                    || CurrentAction == PlayerActionEnum.Up && deadFood.Y >= snakeHead.Y - 5 && deadFood.Y <= snakeHead.Y
-                    || CurrentAction == PlayerActionEnum.Down && deadFood.Y >= snakeHead.Y + 5  && deadFood.Y >= snakeHead.Y
+                if (CurrentAction == PlayerActionEnum.Left && deadFood.X >= snakeHead.X - 10 && deadFood.X <= snakeHead.X
+                    || CurrentAction == PlayerActionEnum.Right && deadFood.X <= snakeHead.X + 10 && deadFood.X >= snakeHead.X
+                    || CurrentAction == PlayerActionEnum.Up && deadFood.Y >= snakeHead.Y - 10 && deadFood.Y <= snakeHead.Y
+                    || CurrentAction == PlayerActionEnum.Down && deadFood.Y >= snakeHead.Y + 10  && deadFood.Y >= snakeHead.Y
                     || _snake.Contains(deadFood)
                     || _food.Contains(deadFood)
                     || _deadFood.Contains(deadFood))
@@ -188,7 +188,7 @@ namespace Snake.Views
                     continue;
                 }
                 
-                await _inputOutputService.Print(deadFood.X, deadFood.Y, _deadFoodPiece, cancellationToken);
+                await _inputOutputService.Print(deadFood.X, deadFood.Y, (255, 0, 0), _deadFoodPiece, cancellationToken);
                 _deadFood.Add(deadFood);
             }
         }

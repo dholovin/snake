@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+    <ApplicationIcon>Resources\snake.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

@@ -51,7 +51,8 @@ namespace Snake.ServiceContracts
         public async Task<string> GetDeadFoodFigure(CancellationToken cancellationToken = default)
         {
             // return await Task.FromResult("†");
-            return await Task.FromResult("╬");
+            //return await Task.FromResult("╬");
+            return await Task.FromResult("█");
         }
     }
 }

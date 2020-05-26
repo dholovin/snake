@@ -60,6 +60,22 @@ namespace Snake.ServiceContracts
             await Task.CompletedTask;
         }
 
+        public async Task Print(int x, int y, object message, CancellationToken cancellationToken = default)
+        {
+            MoveCursorTo(x, y);
+            Out(message.ToString());
+
+            await Task.CompletedTask;
+        }
+
+        public async Task Print(int x, int y, (byte R, byte G, byte B) color, object message, 
+            CancellationToken cancellationToken = default)
+        {
+            ForegroundColor(color.R, color.G, color.B);
+            await Print(x, y, message, cancellationToken);
+            ForegroundColor(255, 255, 255);
+        }
+
         public async Task PrintAtNextLine(object message, CancellationToken cancellationToken = default)
         {
             OutLine(message.ToString());
@@ -75,12 +91,12 @@ namespace Snake.ServiceContracts
             await Task.CompletedTask;
         }
 
-        public async Task Print(int x, int y, object message, CancellationToken cancellationToken = default)
+        public async Task PrintAtNextLine(int x, int y, (byte R, byte G, byte B) color, object message,
+            CancellationToken cancellationToken)
         {
-            MoveCursorTo(x, y);
-            Out(message.ToString());
-
-            await Task.CompletedTask;
+            ForegroundColor(color.R, color.G, color.B);
+            await PrintAtNextLine(message, cancellationToken);
+            ForegroundColor(255, 255, 255);
         }
 
         public async Task Terminate(CancellationToken cancellationToken = default)

@@ -8,7 +8,6 @@ jobs:
   build:
     env:
         PROJECT_PATH: Snake
-        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
         VERSION: 1.0.${{ github.run_number }}
 
     runs-on: ubuntu-latest
@@ -26,15 +25,13 @@ jobs:
            zip -r -j terminal-snake-win-x64.zip ./Snake/bin/Release/netcoreapp3.1/win-x64/publish/*
     - name: Build linux-x64
       run: dotnet publish $PROJECT_PATH -r linux-x64 -c Release --self-contained --no-restore && 
-           zip -r -j terminal-tetris-linux-x64.zip ./Snake/bin/Release/netcoreapp3.1/linux-x64/publish/*
+           zip -r -j terminal-snake-linux-x64.zip ./Snake/bin/Release/netcoreapp3.1/linux-x64/publish/*
     - name: Build osx-x64
       run: dotnet publish $PROJECT_PATH -r osx-x64 -c Release --self-contained --no-restore && 
-           zip -r -j terminal-tetris-osx-x64.zip ./Snake/bin/Release/netcoreapp3.1/osx-x64/publish/*
+           zip -r -j terminal-snake-osx-x64.zip ./Snake/bin/Release/netcoreapp3.1/osx-x64/publish/*
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         tag_name: ${{ env.VERSION }}
         release_name: Release ${{ env.VERSION }}
@@ -43,8 +40,6 @@ jobs:
     - name: Upload Release Asset win-x64 
       id: upload-release-asset-win-x64
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: snake-win-x64.zip
