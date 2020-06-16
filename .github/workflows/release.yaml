@@ -8,6 +8,8 @@ jobs:
   build:
     env:
         PROJECT_PATH: Snake
+        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+        VERSION: 1.0.${{ github.run_number }}
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +32,6 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
-        VERSION: v1.0.${{ github.run_number }}
       with:
         tag_name: ${{ env.VERSION }}
         release_name: Release ${{ env.VERSION }}
@@ -41,9 +40,6 @@ jobs:
     - name: Upload Release Asset win-x64 
       id: upload-release-asset-win-x64
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
-        VERSION: v1.0.${{ github.run_number }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: snake-win-x64.zip
@@ -52,9 +48,6 @@ jobs:
     - name: Upload Release Asset linux-x64 
       id: upload-release-asset-linux-x64
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
-        VERSION: v1.0.${{ github.run_number }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: snake-linux-x64.zip
@@ -63,9 +56,6 @@ jobs:
     - name: Upload Release Asset osx-x64 
       id: upload-release-asset-osx-64
       uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
-        VERSION: v1.0.${{ github.run_number }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: snake-osx-x64.zip
