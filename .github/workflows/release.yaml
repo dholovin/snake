@@ -8,7 +8,7 @@ jobs:
   build:
     env:
         PROJECT_PATH: Snake
-        GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         VERSION: 1.0.${{ github.run_number }}
     runs-on: ubuntu-latest
 
