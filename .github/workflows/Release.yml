@@ -22,6 +22,9 @@ jobs:
     - name: Build win-x64
       run: dotnet publish $PROJECT_PATH -r win-x64 -c Release --self-contained --no-restore && 
            zip -r -j terminal-snake-win-x64.zip ./Snake/bin/Release/netcoreapp3.1/win-x64/publish/*
+    - name: Build win-x86
+      run: dotnet publish $PROJECT_PATH -r win-x86 -c Release --self-contained --no-restore && 
+           zip -r -j terminal-snake-win-x86.zip ./Snake/bin/Release/netcoreapp3.1/win-x86/publish/*
     - name: Build linux-x64
       run: dotnet publish $PROJECT_PATH -r linux-x64 -c Release --self-contained --no-restore && 
            zip -r -j terminal-snake-linux-x64.zip ./Snake/bin/Release/netcoreapp3.1/linux-x64/publish/*
@@ -49,6 +52,17 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: terminal-snake-win-x64.zip
         asset_name: terminal-snake-win-x64.zip
+        asset_content_type: application/zip
+     - name: Upload Release Asset win-x86 
+      id: upload-release-asset-win-x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: v1.0.${{ github.run_number }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: terminal-snake-win-x86.zip
+        asset_name: terminal-snake-win-x86.zip
         asset_content_type: application/zip
     - name: Upload Release Asset linux-x64 
       id: upload-release-asset-linux-x64
