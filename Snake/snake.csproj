@@ -5,6 +5,18 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeIdentifiers>win-x64;win-x86;osx-x64;linux-x64</RuntimeIdentifiers>
     <ApplicationIcon>Resources\snake.ico</ApplicationIcon>
+
+    <Authors>Denys Holovin</Authors>
+    <Company>Home Furnace</Company>
+    <Product>Terminal Snake</Product>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Description>Multi-platform game designed for text terminals</Description>
+    <Copyright>Copyright 2020</Copyright>
+    <PackageLicenseUrl>https://github.com/dholovin/youtubetosrt/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/dholovin/youtubetosrt/releases</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dholovin/youtubetosrt</RepositoryUrl>
+    <RepositoryType>Public</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
