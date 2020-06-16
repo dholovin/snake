@@ -18,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Properties\AssemblyInfo.cs">
+    <Content Include="Properties/AssemblyInfo.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     
-    <Content Include="Resources\snake.ico">
+    <Content Include="Resources/snake.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
