@@ -1,9 +1,12 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyProduct("Terminal Snake")]
 [assembly: AssemblyCompany("Home Furnace")]
-[assembly: AssemblyCopyright("Copyright Denys Holovin ©2020")]
+[assembly: AssemblyProduct("Terminal Snake")]
+[assembly: AssemblyDescriptionAttribute("Multi-platform game designed for text terminals")]
+[assembly: AssemblyMetadataAttribute("Project URL", "https://github.com/dholovin/youtubetosrt/releases")]
+[assembly: AssemblyMetadataAttribute("License URL", "https://github.com/dholovin/youtubetosrt/blob/master/LICENSE.md")]
+[assembly: AssemblyCopyright("Copyright ©2020, Denys Holovin")]
 
 [assembly: Guid("4e4f2d33-aaab-48ea-a63d-1f0a8e3c935f")]
 [assembly: ComVisible(false)] //not going to expose ;)
